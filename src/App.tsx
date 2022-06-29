@@ -1,40 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import './App.css';
-import { styled } from '@mui/material/styles';
-import { Autocomplete, TextField, Grid, Container, Box, Button, Typography, Paper } from '@mui/material';
+
+import { Grid, Box } from '@mui/material';
+import MappingDisplay from './components/MappingDisplay'
+
+
 interface Property { name?: string; label?: string; type?: string; }
 interface Mapping { name?: string, property: Property }
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(2),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
-
-function Mapping(props: { nativeProperty: Property, hubspotContactProperties: Property[], setMappings: Function, mappings: {} }): JSX.Element {
-  const { nativeProperty, hubspotContactProperties, setMappings, mappings } = props
-  const name = nativeProperty.name || 'name'
-  return (
-    <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
-      <Grid item xs={4} >
-        <Item>
-          <Typography variant='body1'>{nativeProperty.label}</Typography>
-        </Item>
-      </Grid>
-      <Grid item xs={4} >
-
-
-        <Autocomplete disablePortal className="hubspotContactPropeties" options={hubspotContactProperties} onChange={(event, value, reason) => { setMappings((mappings: Mapping[]) => { return { ...mappings, [name]: value } }) }} renderInput={(params) => <TextField {...params} label="HubSpot Contact Properties" />} />
-
-
-
-      </Grid>
-    </Grid >
-  )
-}
 
 function App() {
   const [hubspotContactProperties, setHubSpotContactProperties] = useState<Property[]>([]);
@@ -91,7 +64,7 @@ function App() {
         </Grid>
         <Grid id="bodyContainer" xs={8} item>
           {nativeProperties.length > 0 ? nativeProperties.map(property => {
-            return <Mapping hubspotContactProperties={hubspotContactProperties} nativeProperty={property} setMappings={setMappings} mappings={mappings} />
+            return <MappingDisplay hubspotContactProperties={hubspotContactProperties} nativeProperty={property} setMappings={setMappings} mappings={mappings} />
 
           }) : null}
 
