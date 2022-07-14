@@ -16,8 +16,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 
-function MappingDisplay(props: { nativeProperty: Property, hubspotContactProperties: Property[], setMappings: Function, mappings: {} }): JSX.Element {
-    const { nativeProperty, hubspotContactProperties, setMappings, mappings } = props
+function MappingDisplay(props: { nativeProperty: Property, hubspotProperties: Property[], setMappings: Function, mappings: {}, objectType: String }): JSX.Element {
+    const { nativeProperty, hubspotProperties, setMappings, mappings, objectType } = props
     const name = nativeProperty.name || 'name'
     return (
         <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
@@ -29,7 +29,7 @@ function MappingDisplay(props: { nativeProperty: Property, hubspotContactPropert
             <Grid item xs={4} >
 
 
-                <Autocomplete disablePortal className="hubspotContactPropeties" options={hubspotContactProperties} onChange={(event, value, reason) => { setMappings((mappings: Mapping[]) => { return { ...mappings, [name]: value } }) }} renderInput={(params) => <TextField {...params} label="HubSpot Contact Properties" />} />
+                <Autocomplete disablePortal className={`hubspot${objectType}Property`} options={hubspotProperties} onChange={(event, value, reason) => { setMappings((mappings: Mapping[]) => { return { ...mappings, [name]: value } }) }} renderInput={(params) => <TextField {...params} label={`HubSpot ${objectType} Properties`} />} />
 
 
 
