@@ -98,7 +98,6 @@ function App() {
               hubspotProperties={hubspotContactProperties}
               nativeProperty={property}
               setMappings={setMappings}
-              mappings={mappings}
               objectType="Contact"
             />
           );
@@ -129,7 +128,6 @@ function App() {
               hubspotProperties={hubspotCompanyProperties}
               nativeProperty={property}
               setMappings={setMappings}
-              mappings={mappings}
               objectType="Company"
             />
           );

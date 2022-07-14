@@ -17,6 +17,13 @@ interface Mapping {
   property: Property;
 }
 
+interface MappingDisplayProps {
+  nativeProperty: Property;
+  hubspotProperties: Property[];
+  setMappings: Function;
+  objectType: String;
+}
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -25,20 +32,8 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function MappingDisplay(props: {
-  nativeProperty: Property;
-  hubspotProperties: Property[];
-  setMappings: Function;
-  mappings: {};
-  objectType: String;
-}): JSX.Element {
-  const {
-    nativeProperty,
-    hubspotProperties,
-    setMappings,
-    mappings,
-    objectType,
-  } = props;
+function MappingDisplay(props: MappingDisplayProps): JSX.Element {
+  const { nativeProperty, hubspotProperties, setMappings, objectType } = props;
   const name = nativeProperty.name || "name";
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
