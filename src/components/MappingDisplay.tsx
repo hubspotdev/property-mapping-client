@@ -28,7 +28,8 @@ const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(2),
-  textAlign: "center",
+  margin: theme.spacing(2),
+  textAlign: "left",
   color: theme.palette.text.secondary,
 }));
 
@@ -49,6 +50,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           options={hubspotProperties}
           onChange={(event, value, reason) => {
             setMappings((mappings: Mapping[]) => {
+              console.log(mappings, "mappings");
               return { ...mappings, [name]: value };
             });
           }}

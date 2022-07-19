@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import "./App.css";
 
-import { Grid, Box, SimplePaletteColorOptions } from "@mui/material";
+import { Grid, Box, Snackbar } from "@mui/material";
 import MappingDisplay from "./components/MappingDisplay";
 import BasicTabs from "./components/Tabs";
 
@@ -24,8 +24,16 @@ function App() {
   const [hubspotCompanyProperties, setHubSpotCompanyProperties] = useState<
     Property[]
   >([]);
-  const [nativeProperties, setNativeProperties] = useState<Property[]>([]);
+  const [nativeContactProperties, setNativeContactProperties] = useState<
+    Property[]
+  >([]);
+  const [nativeCompanyProperties, setNativeCompanyProperties] = useState<
+    Property[]
+  >([]);
   const [mappings, setMappings] = useState<{}>({});
+
+  const [displaySnackBar, setDisplaySnackBar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   useEffect(() => {
     async function getHubspotProperties() {
@@ -52,58 +60,69 @@ function App() {
     async function getNativeProperties() {
       const response = await fetch("/api/native-properties");
       const properties = await response.json();
-      const nativePropertyOptions = properties.map((property: Property) => {
-        return {
-          name: property.name,
-          label: property.label,
-          type: property.type,
-          object: property.object,
-        };
-      });
-      setNativeProperties(nativePropertyOptions);
+
+      const nativeContactProperties = properties.filter(
+        (property: Property) => {
+          return property.object === "Contact";
+        }
+      );
+      setNativeContactProperties(nativeContactProperties);
+
+      const nativeCompanyProperties = properties.filter(
+        (property: Property) => {
+          return property.object === "Company";
+        }
+      );
+      setNativeCompanyProperties(nativeCompanyProperties);
     }
     getNativeProperties();
   }, []);
   useEffect(() => {
+    const mappingsPayload: { [x: string]: Property }[] = [];
+    for (const [nativePropertyName, hubspotPropertyInfo] of Object.entries(
+      mappings as Mapping[]
+    )) {
+      mappingsPayload.push({
+        [nativePropertyName as string]: hubspotPropertyInfo as Property,
+      });
+    }
+
     async function saveMappings() {
       const response = await fetch("/api/mappings", {
         method: "POST",
-        body: JSON.stringify({ mappings }),
+        body: JSON.stringify({ mappingsPayload }),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
         mode: "cors",
       });
-      const parsedResponse = await response.json();
-      //update Toast message
+      try {
+        const parsedResponse = await response.json();
+        setDisplaySnackBar(true);
+        setSnackbarMessage("Mapping saved successfully");
+      } catch (error) {
+        setDisplaySnackBar(true);
+        setSnackbarMessage("There was an issue saving your mapping");
+      }
     }
     saveMappings();
   }, [mappings]);
 
   const renderContactProperties = () => {
-    const contactProperties =
-      nativeProperties.length > 0
-        ? nativeProperties.filter((property) => {
-            return property.object === "Contact";
-          })
-        : null;
+    const contactPropertiesMappings = nativeContactProperties.map(
+      (property) => {
+        return (
+          <MappingDisplay
+            hubspotProperties={hubspotContactProperties}
+            nativeProperty={property}
+            setMappings={setMappings}
+            objectType="Contact"
+          />
+        );
+      }
+    );
 
-    console.log(contactProperties);
-
-    const contactPropertiesMappings = contactProperties
-      ? contactProperties.map((property) => {
-          return (
-            <MappingDisplay
-              hubspotProperties={hubspotContactProperties}
-              nativeProperty={property}
-              setMappings={setMappings}
-              objectType="Contact"
-            />
-          );
-        })
-      : null;
-    console.log(contactPropertiesMappings);
     return (
       <div className="contact-property-mappings-wrapper">
         <> {contactPropertiesMappings} </>
@@ -112,28 +131,19 @@ function App() {
   };
 
   const renderCompanyProperties = () => {
-    const companyProperties =
-      nativeProperties.length > 0
-        ? nativeProperties.filter((property) => {
-            return property.object === "Company";
-          })
-        : null;
+    const companyPropertiesMappings = nativeCompanyProperties.map(
+      (property) => {
+        return (
+          <MappingDisplay
+            hubspotProperties={hubspotCompanyProperties}
+            nativeProperty={property}
+            setMappings={setMappings}
+            objectType="Company"
+          />
+        );
+      }
+    );
 
-    console.log(companyProperties);
-
-    const companyPropertiesMappings = companyProperties
-      ? companyProperties.map((property) => {
-          return (
-            <MappingDisplay
-              hubspotProperties={hubspotCompanyProperties}
-              nativeProperty={property}
-              setMappings={setMappings}
-              objectType="Company"
-            />
-          );
-        })
-      : null;
-    console.log(companyPropertiesMappings);
     return (
       <div className="contact-property-mappings-wrapper">
         <> {companyPropertiesMappings} </>
@@ -154,6 +164,13 @@ function App() {
           <p>Side Bar Content here</p>
         </Grid>
         <Grid id="bodyContainer" xs={8} item>
+          <Snackbar
+            open={displaySnackBar}
+            message={snackbarMessage}
+            autoHideDuration={3000}
+            onClose={() => setDisplaySnackBar(false)}
+          />
+
           <BasicTabs
             objects={["Contact", "Company"]}
             tabContent={[renderContactProperties(), renderCompanyProperties()]}
