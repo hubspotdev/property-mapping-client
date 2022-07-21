@@ -60,14 +60,14 @@ function BasicTabs(props: {
           aria-label="property mapping tabs"
         >
           {objects.map((object, index) => {
-            return <Tab label={object} {...a11yProps(index)} />;
+            return <Tab key={index} label={object} {...a11yProps(index)} />;
           })}
         </Tabs>
       </Box>
       <>
         {tabContent.map((tab, index) => {
           return (
-            <TabPanel value={activeTab} index={index}>
+            <TabPanel key={index} value={activeTab} index={index}>
               {tab}
             </TabPanel>
           );

@@ -4,8 +4,10 @@ import {
   Grid,
   Typography,
   Paper,
+  AutocompleteRenderOptionState,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { HTMLAttributes } from "react";
 
 interface Property {
   name?: string;
@@ -22,6 +24,7 @@ interface MappingDisplayProps {
   hubspotProperties: Property[];
   setMappings: Function;
   objectType: String;
+  mappings: Mapping;
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -33,9 +36,39 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const OptionDisplay = (
+  props: HTMLAttributes<HTMLLIElement>,
+  option: Property,
+  state: AutocompleteRenderOptionState
+): JSX.Element => {
+  return (
+    <li {...props} key={option.name}>
+      {" "}
+      {option.label}
+      <span className="option-name">
+        {" "}
+        {"    "} {option.name}
+      </span>{" "}
+    </li>
+  );
+};
+
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
-  const { nativeProperty, hubspotProperties, setMappings, objectType } = props;
+  const {
+    nativeProperty,
+    hubspotProperties,
+    setMappings,
+    objectType,
+    mappings,
+  } = props;
   const name = nativeProperty.name || "name";
+  console.log(mappings);
+  // const getInputVlaue = (): Property => {
+  //   if ((mappings.name = name)) {
+  //     return mappings.property;
+  //   }
+  // };
+
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -49,14 +82,16 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           className={`hubspot${objectType}Property`}
           options={hubspotProperties}
           onChange={(event, value, reason) => {
-            setMappings((mappings: Mapping[]) => {
+            console.log("value", value);
+            setMappings((mappings: Mapping) => {
               console.log(mappings, "mappings");
-              return { ...mappings, [name]: value };
+              return { ...mappings, name: name, property: value };
             });
           }}
           renderInput={(params) => (
             <TextField {...params} label={`HubSpot ${objectType} Properties`} />
           )}
+          renderOption={OptionDisplay}
         />
       </Grid>
     </Grid>
