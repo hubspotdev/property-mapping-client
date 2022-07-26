@@ -10,8 +10,10 @@ const theme = createTheme({
   components: {
     MuiAutocomplete: {
       styleOverrides: {
-        root: {
-          justifyContent: "space-between",
+        option: {
+          "&.MuiAutocomplete-option": {
+            justifyContent: "space-between",
+          },
         },
       },
     },
@@ -19,13 +21,13 @@ const theme = createTheme({
 });
 
 interface Property {
-  name?: string;
-  label?: string;
-  type?: string;
-  object?: string;
+  name: string;
+  label: string;
+  type: string;
+  object: string;
 }
 interface Mapping {
-  name?: string;
+  name: string;
   property: Property;
 }
 
@@ -42,10 +44,17 @@ function App() {
   const [nativeCompanyProperties, setNativeCompanyProperties] = useState<
     Property[]
   >([]);
-  const [mappings, setMappings] = useState<Mapping>({
-    name: "name",
-    property: {},
-  });
+  const [mappings, setMappings] = useState<Mapping[]>([
+    {
+      name: "",
+      property: {
+        name: "",
+        label: "",
+        type: "",
+        object: "Contact",
+      },
+    },
+  ]);
 
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -59,10 +68,8 @@ function App() {
         properties.contactProperties.map((property: Property) => {
           return { name: property.name, label: property.label };
         });
-      console.log("options", contactPropertyOptions.length);
-      console.log("contactProperties", hubspotContactProperties.length);
+
       setHubSpotContactProperties(contactPropertyOptions);
-      console.log("contactProperties", hubspotContactProperties.length);
       const companyPropertyOptions = properties.companyProperties.map(
         (property: Property) => {
           return { name: property.name, label: property.label };
@@ -95,20 +102,10 @@ function App() {
     getNativeProperties();
   }, []);
   useEffect(() => {
-    const mappingsPayload: Mapping[] = new Array();
-    for (const [nativePropertyName, hubspotPropertyInfo] of Object.entries(
-      mappings
-    )) {
-      mappingsPayload.push({
-        name: nativePropertyName,
-        property: hubspotPropertyInfo,
-      });
-    }
-
     async function saveMappings() {
       const response = await fetch("/api/mappings", {
         method: "POST",
-        body: JSON.stringify({ mappingsPayload }),
+        body: JSON.stringify(mappings),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -127,6 +124,16 @@ function App() {
     saveMappings();
   }, [mappings]);
 
+  useEffect(() => {
+    async function getMappings() {
+      const response = await fetch("/api/mappings");
+      const mappings = await response.json();
+      console.log("mappings in effect", mappings);
+      setMappings(mappings);
+    }
+    getMappings();
+  }, []);
+
   const renderContactProperties = () => {
     console.log(
       "hubspotContactProperties in render",
@@ -134,8 +141,9 @@ function App() {
     );
     const contactPropertiesMappings = nativeContactProperties.map(
       (property, index) => {
+        console.log("rendering contact properties, mappings:", mappings);
         const getMappingForProperty = () => {};
-        const mappingForProperty = mappings.name == property.name;
+        // const mappingForProperty = mappings.name == property.name;
         return (
           <MappingDisplay
             key={index}

@@ -7,15 +7,15 @@ import {
   AutocompleteRenderOptionState,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { HTMLAttributes } from "react";
+import React, { HTMLAttributes, useState, useEffect } from "react";
 
 interface Property {
-  name?: string;
-  label?: string;
-  type?: string;
+  name: string;
+  label: string;
+  type: string;
 }
 interface Mapping {
-  name?: string;
+  name: string;
   property: Property;
 }
 
@@ -24,7 +24,7 @@ interface MappingDisplayProps {
   hubspotProperties: Property[];
   setMappings: Function;
   objectType: String;
-  mappings: Mapping;
+  mappings: Mapping[];
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -53,6 +53,12 @@ const OptionDisplay = (
   );
 };
 
+const defaultProperty = {
+  name: "name",
+  label: "label",
+  type: "Contact",
+};
+
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const {
     nativeProperty,
@@ -61,14 +67,68 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     objectType,
     mappings,
   } = props;
-  const name = nativeProperty.name || "name";
-  console.log(mappings);
-  // const getInputVlaue = (): Property => {
-  //   if ((mappings.name = name)) {
-  //     return mappings.property;
-  //   }
-  // };
+  const nativePropertyName = nativeProperty.name || "name";
 
+  console.log("optionShape", hubspotProperties[0]);
+
+  const [value, setValue] = useState<Property>(defaultProperty);
+  const [inputValue, setInputValue] = useState<string>("");
+
+  const calculateNewMappings = (
+    mappings: Mapping[],
+    value: Property
+  ): Mapping[] => {
+    const index = mappings.findIndex((mapping) => {
+      return mapping.name == nativePropertyName;
+    });
+    console.log(index);
+    if (index === -1) {
+      return [...mappings, { name: nativePropertyName, property: value }];
+    } else {
+      const newMappings = [...mappings];
+      newMappings[index] = { name: nativePropertyName, property: value };
+      return newMappings;
+    }
+  };
+
+  const handleChange = (
+    event: React.SyntheticEvent,
+    value: Property | null
+  ) => {
+    console.log("handling change");
+    console.log(event);
+    console.log(value);
+    if (value === null) {
+      console.log("value is null, nothing to change here");
+    } else {
+      const newMappings = calculateNewMappings(mappings, value);
+      setMappings(newMappings);
+      console.log("mappings after handle change", newMappings);
+      //setInitialValue();
+      setValue(value);
+
+      setInputValue(value.name);
+    }
+  };
+
+  useEffect(() => {
+    const matchingMapping = mappings.find((mapping) => {
+      return mapping.name == nativePropertyName;
+    });
+    if (matchingMapping != undefined) {
+      setValue(matchingMapping.property);
+      setInputValue(matchingMapping.name);
+    }
+
+    console.log("match found", matchingMapping);
+    console.log("ineffect ", matchingMapping?.property?.label || "");
+    //setInputValue(property?.property?.label || "");
+    //return property?.property?.label || "";
+  }, []);
+  console.log("value", value);
+  if (hubspotProperties.length == 0) {
+    return <div>Loading</div>;
+  }
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -78,20 +138,26 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       </Grid>
       <Grid item xs={4}>
         <Autocomplete
-          disablePortal
           className={`hubspot${objectType}Property`}
           options={hubspotProperties}
-          onChange={(event, value, reason) => {
-            console.log("value", value);
-            setMappings((mappings: Mapping) => {
-              console.log(mappings, "mappings");
-              return { ...mappings, name: name, property: value };
-            });
+          onChange={handleChange}
+          renderInput={(params) => {
+            return (
+              <TextField
+                {...params}
+                label={`HubSpot ${objectType} Properties`}
+              />
+            );
           }}
-          renderInput={(params) => (
-            <TextField {...params} label={`HubSpot ${objectType} Properties`} />
-          )}
           renderOption={OptionDisplay}
+          inputValue={inputValue}
+          onInputChange={(_, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
+          value={value}
+          isOptionEqualToValue={(option, value) => {
+            return option.name === value.name;
+          }}
         />
       </Grid>
     </Grid>
