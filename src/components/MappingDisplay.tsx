@@ -5,6 +5,7 @@ import {
   Typography,
   Paper,
   AutocompleteRenderOptionState,
+  CircularProgress,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { HTMLAttributes, useState, useEffect } from "react";
@@ -69,8 +70,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   } = props;
   const nativePropertyName = nativeProperty.name || "name";
 
-  console.log("optionShape", hubspotProperties[0]);
-
   const [value, setValue] = useState<Property>(defaultProperty);
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -95,16 +94,12 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     event: React.SyntheticEvent,
     value: Property | null
   ) => {
-    console.log("handling change");
-    console.log(event);
-    console.log(value);
     if (value === null) {
       console.log("value is null, nothing to change here");
     } else {
       const newMappings = calculateNewMappings(mappings, value);
       setMappings(newMappings);
-      console.log("mappings after handle change", newMappings);
-      //setInitialValue();
+
       setValue(value);
 
       setInputValue(value.name);
@@ -119,15 +114,10 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       setValue(matchingMapping.property);
       setInputValue(matchingMapping.name);
     }
-
-    console.log("match found", matchingMapping);
-    console.log("ineffect ", matchingMapping?.property?.label || "");
-    //setInputValue(property?.property?.label || "");
-    //return property?.property?.label || "";
   }, []);
-  console.log("value", value);
+
   if (hubspotProperties.length == 0) {
-    return <div>Loading</div>;
+    return <CircularProgress />;
   }
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
