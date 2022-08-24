@@ -37,8 +37,9 @@ function TabPanel(props: TabPanelProps) {
 function BasicTabs(props: {
   objects: String[];
   tabContent: React.ReactNode[];
+  children: React.ReactNode[];
 }) {
-  const { objects, tabContent } = props;
+  const { objects, tabContent, children } = props;
   const [activeTab, setActiveTab] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -51,6 +52,7 @@ function BasicTabs(props: {
       "aria-controls": `simple-tabpanel-${index}`,
     };
   }
+  console.log(children);
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -65,10 +67,11 @@ function BasicTabs(props: {
         </Tabs>
       </Box>
       <>
-        {tabContent.map((tab, index) => {
+        {children.map((child: React.ReactNode, index: number) => {
+          console.log(child);
           return (
             <TabPanel key={index} value={activeTab} index={index}>
-              {tab}
+              {child}
             </TabPanel>
           );
         })}

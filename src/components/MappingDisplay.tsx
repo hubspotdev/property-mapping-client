@@ -9,16 +9,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { HTMLAttributes, useState, useEffect } from "react";
-
-interface Property {
-  name: string;
-  label: string;
-  type: string;
-}
-interface Mapping {
-  name: string;
-  property: Property;
-}
+import { Property, Mapping } from "../utils";
 
 interface MappingDisplayProps {
   nativeProperty: Property;
@@ -55,9 +46,9 @@ const OptionDisplay = (
 };
 
 const defaultProperty = {
-  name: "name",
-  label: "label",
-  type: "Contact",
+  name: "",
+  label: "",
+  type: "",
 };
 
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
@@ -70,19 +61,23 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   } = props;
   const nativePropertyName = nativeProperty.name || "name";
 
-  const [value, setValue] = useState<Property>(defaultProperty);
+  const [value, setValue] = useState<Property | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
 
   const calculateNewMappings = (
     mappings: Mapping[],
-    value: Property
+    value: Property | null
   ): Mapping[] => {
     const index = mappings.findIndex((mapping) => {
       return mapping.name == nativePropertyName;
     });
     console.log(index);
-    if (index === -1) {
+    if (index === -1 && value != null) {
       return [...mappings, { name: nativePropertyName, property: value }];
+    } else if (value == null) {
+      const newMappings = [...mappings];
+      newMappings.splice(index);
+      return newMappings;
     } else {
       const newMappings = [...mappings];
       newMappings[index] = { name: nativePropertyName, property: value };
@@ -94,14 +89,11 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     event: React.SyntheticEvent,
     value: Property | null
   ) => {
-    if (value === null) {
-      console.log("value is null, nothing to change here");
-    } else {
-      const newMappings = calculateNewMappings(mappings, value);
-      setMappings(newMappings);
+    const newMappings = calculateNewMappings(mappings, value);
+    setMappings(newMappings);
 
+    if (value != null) {
       setValue(value);
-
       setInputValue(value.name);
     }
   };
