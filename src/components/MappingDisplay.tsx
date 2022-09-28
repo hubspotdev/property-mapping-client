@@ -45,12 +45,6 @@ const OptionDisplay = (
   );
 };
 
-const defaultProperty = {
-  name: "",
-  label: "",
-  type: "",
-};
-
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const {
     nativeProperty,
@@ -71,12 +65,12 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     const index = mappings.findIndex((mapping) => {
       return mapping.name == nativePropertyName;
     });
-    console.log(index);
+    console.log("mapping index", index);
     if (index === -1 && value != null) {
       return [...mappings, { name: nativePropertyName, property: value }];
     } else if (value == null) {
       const newMappings = [...mappings];
-      newMappings.splice(index);
+      newMappings.splice(index, 1);
       return newMappings;
     } else {
       const newMappings = [...mappings];
@@ -89,11 +83,15 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     event: React.SyntheticEvent,
     value: Property | null
   ) => {
+    console.log("event", event);
+    console.log("value", value);
+    console.log("mappings in handle change", mappings);
     const newMappings = calculateNewMappings(mappings, value);
-    setMappings(newMappings);
+    console.log("newMappings in handle change", newMappings);
 
+    setMappings(newMappings);
+    setValue(value);
     if (value != null) {
-      setValue(value);
       setInputValue(value.name);
     }
   };

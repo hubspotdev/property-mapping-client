@@ -1,5 +1,3 @@
-import { Propane } from "@mui/icons-material";
-
 interface Property {
   name: string;
   label: string;
@@ -15,6 +13,7 @@ interface PropertisesResponse {
 interface Mapping {
   name: string;
   property: Property;
+  id?: number;
 }
 
 const getHubSpotProperties = async (): Promise<PropertisesResponse> => {
@@ -47,7 +46,22 @@ const shapeProperties = (properties: Property[]) => {
 const makeMappingUnique = (mapping: Mapping) => {
   const { name, property } = mapping;
   const { label, object, type } = property;
-  return `${name}${property.name}${object}${label}`;
+  return `${name};${property.name};${object};${label}`;
+};
+
+const getMappingNameFromDifferenceArray = (mappingStrings: string[]) => {
+  const mappingString = mappingStrings[0]; // should only ever be one item in the array since this fires on click
+  const valuesArray = mappingString.split(";");
+  const mappingName = valuesArray[0];
+  return mappingName;
+};
+
+const displayErrorMessage = (error: any) => {
+  if (error instanceof Error) {
+    return `Something went wrong: ${error.message}`;
+  }
+
+  return `Something went wrong: ${String(error)}`;
 };
 
 export {
@@ -56,5 +70,7 @@ export {
   getContactProperties,
   shapeProperties,
   makeMappingUnique,
+  getMappingNameFromDifferenceArray,
+  displayErrorMessage,
 };
 export type { Mapping, Property };

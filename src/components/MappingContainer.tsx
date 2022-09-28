@@ -1,3 +1,4 @@
+import { ErrorOutline, Password } from "@mui/icons-material";
 import React, { useEffect, useState, useRef } from "react";
 import {
   getHubSpotProperties,
@@ -7,14 +8,23 @@ import {
   makeMappingUnique,
   Property,
   Mapping,
+  getMappingNameFromDifferenceArray,
+  displayErrorMessage,
 } from "../utils";
 import MappingDisplay from "./MappingDisplay";
 
-function MappingContainer(props: { objectType: "Contact" | "Company" }) {
+function MappingContainer(props: {
+  objectType: "Contact" | "Company";
+  setDisplaySnackBar: Function;
+  setSnackbarMessage: Function;
+}) {
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
   const [nativeProperties, setNativeProperties] = useState<Property[]>([]);
 
   const [mappings, setMappings] = useState<Mapping[]>();
+
+  const { objectType, setDisplaySnackBar, setSnackbarMessage } = props;
+
   function usePrevious(value: Mapping[] | undefined) {
     const ref = useRef<Mapping[]>();
 
@@ -27,13 +37,26 @@ function MappingContainer(props: { objectType: "Contact" | "Company" }) {
 
   const findDifferences = (
     previousMappings: Mapping[],
-    currentmappings: Mapping[]
+    currentMappings: Mapping[]
   ) => {
-    previousMappings.filter((previousMapping) =>
-      currentmappings.some((currentMapping) => {
-        makeMappingUnique(currentMapping) == makeMappingUnique(previousMapping);
-      })
-    );
+    console.log("previous mappings", previousMappings);
+    console.log("current mappings", currentMappings);
+    // const previousMappingsStrings = previousMappings.map((previousMapping) =>
+    //   makeMappingUnique(previousMapping)
+    // );
+    // const currentMappingsStrings = currentMappings.map((currentMapping) =>
+    //   makeMappingUnique(currentMapping)
+    // );
+    const previousMappingIds = previousMappings.map((previousMapping) => {
+      return previousMapping.id;
+    });
+    const currentMappingIds = currentMappings.map((currentMapping) => {
+      return currentMapping.id;
+    });
+
+    return previousMappingIds.filter((previousMapping) => {
+      return !currentMappingIds.includes(previousMapping);
+    });
   };
   useEffect(() => {
     async function saveMappings() {
@@ -46,18 +69,47 @@ function MappingContainer(props: { objectType: "Contact" | "Company" }) {
         },
         mode: "cors",
       });
+      setDisplaySnackBar(true);
       try {
         const parsedResponse = await response.json();
-      } catch (error) {}
-    }
 
+        setSnackbarMessage("Mappings Saved Succesfully");
+      } catch (error) {
+        const errorMessage = displayErrorMessage(error);
+
+        setDisplaySnackBar(errorMessage);
+      }
+    }
+    //Add in object type
+    async function deleteMapping(mappingId: number | undefined) {
+      if (mappingId == undefined) {
+        setDisplaySnackBar("No mapping ID, unable to delete");
+      }
+      const response = await fetch(`/api/mappings/${mappingId}`, {
+        method: "DELETE",
+        mode: "cors",
+      });
+      try {
+        const parsedResponse = await response.json();
+        console.log(parsedResponse);
+      } catch (error) {
+        const errorMessage = displayErrorMessage(error);
+
+        setDisplaySnackBar(errorMessage);
+      }
+    }
     if (!previousMappings || !mappings) {
       console.log("no previous mappings");
     } else if (previousMappings.length > mappings.length) {
       const difference = findDifferences(previousMappings, mappings);
       console.log("difference", difference);
+      //const mappingNameToDelete = getMappingNameFromDifferenceArray(difference);
+      deleteMapping(difference[0]);
+    } else {
+      console.log("mapping mapping added");
+      saveMappings();
     }
-    saveMappings();
+    //saveMappings();
   }, [mappings]);
 
   useEffect(() => {
@@ -104,8 +156,6 @@ function MappingContainer(props: { objectType: "Contact" | "Company" }) {
 
     getHubspotProperties();
   }, []);
-
-  const { objectType } = props;
 
   if (!mappings) {
     return null;

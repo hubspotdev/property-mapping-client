@@ -31,18 +31,6 @@ const theme = createTheme({
 });
 
 function App() {
-  const [mappings, setMappings] = useState<Mapping[]>([
-    {
-      name: "",
-      property: {
-        name: "",
-        label: "",
-        type: "",
-        object: "Contact",
-      },
-    },
-  ]);
-
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -65,10 +53,19 @@ function App() {
               message={snackbarMessage}
               autoHideDuration={3000}
               onClose={() => setDisplaySnackBar(false)}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
             />
-            <BasicTabs objects={["Contact", "Company"]} tabContent={[]}>
-              <MappingContainer objectType="Contact" />
-              <MappingContainer objectType="Company" />
+            <BasicTabs objects={["Contact", "Company"]}>
+              <MappingContainer
+                objectType="Contact"
+                setDisplaySnackBar={setDisplaySnackBar}
+                setSnackbarMessage={setSnackbarMessage}
+              />
+              <MappingContainer
+                objectType="Company"
+                setDisplaySnackBar={setDisplaySnackBar}
+                setSnackbarMessage={setSnackbarMessage}
+              />
             </BasicTabs>
           </Grid>
           <Grid id="footerContainer" xs={12} item className="App-footer">
