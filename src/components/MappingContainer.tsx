@@ -10,6 +10,7 @@ import {
   Mapping,
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
+  PROPERTY_TYPE_COMPATIBILITY,
 } from "../utils";
 import MappingDisplay from "./MappingDisplay";
 
@@ -157,6 +158,19 @@ function MappingContainer(props: {
     getHubspotProperties();
   }, []);
 
+  const filterHubSpotPropertiesByType = (
+    nativeProperty: Property,
+    hubspotProperties: Property[]
+  ) => {
+    const allowedType =
+      PROPERTY_TYPE_COMPATIBILITY[
+        nativeProperty.type as keyof typeof PROPERTY_TYPE_COMPATIBILITY
+      ];
+    return hubspotProperties.filter(
+      (hubspotProperty) => hubspotProperty.type == allowedType
+    );
+  };
+
   if (!mappings) {
     return null;
   }
@@ -164,10 +178,14 @@ function MappingContainer(props: {
   return (
     <div className="contact-property-mappings-wrapper">
       {nativeProperties.map((property, index) => {
+        const filteredHubSpotProperties = filterHubSpotPropertiesByType(
+          property,
+          hubspotProperties
+        );
         return (
           <MappingDisplay
             key={index}
-            hubspotProperties={hubspotProperties}
+            hubspotProperties={filteredHubSpotProperties}
             nativeProperty={property}
             objectType={objectType}
             mappings={mappings}

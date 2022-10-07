@@ -64,6 +64,13 @@ const displayErrorMessage = (error: any) => {
   return `Something went wrong: ${String(error)}`;
 };
 
+const PROPERTY_TYPE_COMPATIBILITY = {
+  //Pulled from list of property types https://developers.hubspot.com/docs/api/crm/properties
+  String: "string",
+  Number: "number",
+  Option: "enumeration",
+};
+
 export {
   getHubSpotProperties,
   getCompanyProperties,
@@ -72,5 +79,6 @@ export {
   makeMappingUnique,
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
+  PROPERTY_TYPE_COMPATIBILITY,
 };
 export type { Mapping, Property };
