@@ -5,6 +5,7 @@ import "./App.css";
 import { Grid, Box, Snackbar, createTheme, ThemeProvider } from "@mui/material";
 import MappingDisplay from "./components/MappingDisplay";
 import BasicTabs from "./components/Tabs";
+import Header from "./components/Header";
 import {
   getHubSpotProperties,
   getCompanyProperties,
@@ -42,6 +43,7 @@ function App() {
             <Grid item>
               {" "}
               <p>Header content here</p>
+              <Header />
             </Grid>
           </Grid>
           <Grid id="sideBarContainer" xs={2} item>
