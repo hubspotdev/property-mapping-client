@@ -22,7 +22,19 @@ function MappingContainer(props: {
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
   const [nativeProperties, setNativeProperties] = useState<Property[]>([]);
 
-  const [mappings, setMappings] = useState<Mapping[]>();
+  const requiredMappings: Mapping[] = [
+    {
+      name: "example_required",
+      property: {
+        name: "example_required",
+        label: "Example Required",
+        object: "Contact",
+        type: "text",
+      },
+    },
+  ];
+
+  const [mappings, setMappings] = useState<Mapping[]>(requiredMappings);
 
   const { objectType, setDisplaySnackBar, setSnackbarMessage } = props;
 
@@ -118,7 +130,7 @@ function MappingContainer(props: {
       const response = await fetch("/api/mappings");
       const mappings = await response.json();
       console.log("mappings in effect", mappings);
-      setMappings(mappings);
+      setMappings([...requiredMappings, ...mappings]);
     }
     getMappings();
   }, []);

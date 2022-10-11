@@ -138,6 +138,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
+          disabled={nativeProperty.name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
         />
       </Grid>
     </Grid>
