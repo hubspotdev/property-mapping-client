@@ -6,10 +6,18 @@ import {
   Paper,
   AutocompleteRenderOptionState,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import EastIcon from "@mui/icons-material/East";
+import WestIcon from "@mui/icons-material/West";
+import MultipleStopIcon from "@mui/icons-material/MultipleStop";
 import React, { HTMLAttributes, useState, useEffect } from "react";
-import { Property, Mapping } from "../utils";
+import { Property, Mapping, Direction } from "../utils";
 
 interface MappingDisplayProps {
   nativeProperty: Property;
@@ -57,36 +65,48 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   const [value, setValue] = useState<Property | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
+  const [syncDirection, setSyncDirection] = useState<Direction>(
+    Direction.toHubSpot
+  );
 
   const calculateNewMappings = (
     mappings: Mapping[],
-    value: Property | null
+    value: Property | null,
+    direction: Direction
   ): Mapping[] => {
     const index = mappings.findIndex((mapping) => {
       return mapping.name == nativePropertyName;
     });
     console.log("mapping index", index);
     if (index === -1 && value != null) {
-      return [...mappings, { name: nativePropertyName, property: value }];
+      return [
+        ...mappings,
+        { name: nativePropertyName, property: value, direction },
+      ];
     } else if (value == null) {
       const newMappings = [...mappings];
       newMappings.splice(index, 1);
       return newMappings;
     } else {
       const newMappings = [...mappings];
-      newMappings[index] = { name: nativePropertyName, property: value };
+      newMappings[index] = {
+        name: nativePropertyName,
+        property: value,
+        direction,
+      };
       return newMappings;
     }
   };
 
-  const handleChange = (
+  const handleMappingChange = (
     event: React.SyntheticEvent,
     value: Property | null
   ) => {
     console.log("event", event);
     console.log("value", value);
     console.log("mappings in handle change", mappings);
-    const newMappings = calculateNewMappings(mappings, value);
+
+    const newMappings = calculateNewMappings(mappings, value, syncDirection);
     console.log("newMappings in handle change", newMappings);
 
     setMappings(newMappings);
@@ -95,7 +115,11 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       setInputValue(value.name);
     }
   };
-
+  const handleDirectionChange = (event: SelectChangeEvent) => {
+    console.log(event);
+    const newSyncDirection = event.target.value as Direction;
+    setSyncDirection(newSyncDirection);
+  };
   useEffect(() => {
     const matchingMapping = mappings.find((mapping) => {
       return mapping.name == nativePropertyName;
@@ -116,11 +140,34 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           <Typography variant="body1">{nativeProperty.label}</Typography>
         </Item>
       </Grid>
+      <Grid item xs={2}>
+        <FormControl sx={{ width: 100 }}>
+          <InputLabel id={`sync-direction-${nativeProperty.label}`}>
+            {" "}
+            Sync Direction
+          </InputLabel>
+          <Select
+            labelId={`sync-direction-${nativeProperty.label}`}
+            onChange={handleDirectionChange}
+            value={syncDirection}
+          >
+            <MenuItem value={"toHubSpot"}>
+              <EastIcon />
+            </MenuItem>
+            <MenuItem value={"toNative"}>
+              <WestIcon />
+            </MenuItem>
+            <MenuItem value={"biDirectional"}>
+              <MultipleStopIcon />
+            </MenuItem>
+          </Select>
+        </FormControl>
+      </Grid>
       <Grid item xs={4}>
         <Autocomplete
           className={`hubspot${objectType}Property`}
           options={hubspotProperties}
-          onChange={handleChange}
+          onChange={handleMappingChange}
           renderInput={(params) => {
             return (
               <TextField

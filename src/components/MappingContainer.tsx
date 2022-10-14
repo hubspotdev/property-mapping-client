@@ -1,4 +1,3 @@
-import { ErrorOutline, Password } from "@mui/icons-material";
 import React, { useEffect, useState, useRef } from "react";
 import {
   getHubSpotProperties,
@@ -11,6 +10,7 @@ import {
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
   PROPERTY_TYPE_COMPATIBILITY,
+  Direction,
 } from "../utils";
 import MappingDisplay from "./MappingDisplay";
 
@@ -22,17 +22,7 @@ function MappingContainer(props: {
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
   const [nativeProperties, setNativeProperties] = useState<Property[]>([]);
 
-  const requiredMappings: Mapping[] = [
-    {
-      name: "example_required",
-      property: {
-        name: "example_required",
-        label: "Example Required",
-        object: "Contact",
-        type: "text",
-      },
-    },
-  ];
+  const requiredMappings: Mapping[] = [];
 
   const [mappings, setMappings] = useState<Mapping[]>(requiredMappings);
 
@@ -130,7 +120,11 @@ function MappingContainer(props: {
       const response = await fetch("/api/mappings");
       const mappings = await response.json();
       console.log("mappings in effect", mappings);
-      setMappings([...requiredMappings, ...mappings]);
+      const mappingsWithDefaultDirection = mappings.map((mapping: Mapping) => {
+        mapping.direction = Direction.toHubSpot;
+        return mapping;
+      });
+      setMappings([...requiredMappings, ...mappingsWithDefaultDirection]);
     }
     getMappings();
   }, []);
@@ -154,12 +148,12 @@ function MappingContainer(props: {
       switch (objectType) {
         case "Contact":
           setHubSpotProperties(
-            shapeProperties(getContactProperties(hubspotProperties))
+            shapeProperties(getContactProperties(hubspotProperties), "Contact")
           );
           break;
         case "Company":
           setHubSpotProperties(
-            shapeProperties(getCompanyProperties(hubspotProperties))
+            shapeProperties(getCompanyProperties(hubspotProperties), "Company")
           );
           break;
         default:

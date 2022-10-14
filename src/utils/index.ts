@@ -14,6 +14,13 @@ interface Mapping {
   name: string;
   property: Property;
   id?: number;
+  direction: Direction;
+}
+
+enum Direction {
+  toHubSpot = "toHubSpot",
+  toNative = "toNative",
+  biDirectional = "biDirectional",
 }
 
 const getHubSpotProperties = async (): Promise<PropertisesResponse> => {
@@ -32,13 +39,13 @@ const getCompanyProperties = (hubspotProperties: PropertisesResponse) => {
   return companyProperties;
 };
 
-const shapeProperties = (properties: Property[]) => {
+const shapeProperties = (properties: Property[], object: string) => {
   return properties.map((property) => {
     return {
       name: property.name,
       label: property.label,
       type: property.type,
-      object: property.object,
+      object: object,
     };
   });
 };
@@ -80,5 +87,6 @@ export {
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
   PROPERTY_TYPE_COMPATIBILITY,
+  Direction,
 };
 export type { Mapping, Property };
