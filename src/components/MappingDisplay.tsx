@@ -115,18 +115,33 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       setInputValue(value.name);
     }
   };
-  const handleDirectionChange = (event: SelectChangeEvent) => {
+  const handleDirectionChange = (
+    event: SelectChangeEvent,
+    hubspotProperty: Property | null
+  ) => {
+    if (hubspotProperty === null) {
+      return false;
+    }
     console.log(event);
     const newSyncDirection = event.target.value as Direction;
     setSyncDirection(newSyncDirection);
+    const newMappings = calculateNewMappings(
+      mappings,
+      hubspotProperty,
+      newSyncDirection
+    );
+    console.log("new mappings in handldirectionchange", newMappings);
+    setMappings(newMappings);
   };
   useEffect(() => {
     const matchingMapping = mappings.find((mapping) => {
       return mapping.name == nativePropertyName;
     });
+    console.log("matchingMapping", matchingMapping);
     if (matchingMapping != undefined) {
       setValue(matchingMapping.property);
       setInputValue(matchingMapping.name);
+      setSyncDirection(matchingMapping.direction);
     }
   }, []);
 
@@ -148,7 +163,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           </InputLabel>
           <Select
             labelId={`sync-direction-${nativeProperty.label}`}
-            onChange={handleDirectionChange}
+            onChange={(event) => handleDirectionChange(event, value)}
             value={syncDirection}
           >
             <MenuItem value={"toHubSpot"}>

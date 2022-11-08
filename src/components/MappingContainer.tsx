@@ -63,6 +63,7 @@ function MappingContainer(props: {
   };
   useEffect(() => {
     async function saveMappings() {
+      console.log("mappings to be saved", mappings);
       const response = await fetch("/api/mappings", {
         method: "POST",
         body: JSON.stringify(mappings),
@@ -109,7 +110,7 @@ function MappingContainer(props: {
       //const mappingNameToDelete = getMappingNameFromDifferenceArray(difference);
       deleteMapping(difference[0]);
     } else {
-      console.log("mapping mapping added");
+      console.log("mapping added");
       saveMappings();
     }
     //saveMappings();
