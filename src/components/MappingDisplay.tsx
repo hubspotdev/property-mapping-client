@@ -16,15 +16,12 @@ import { styled } from "@mui/material/styles";
 import EastIcon from "@mui/icons-material/East";
 import WestIcon from "@mui/icons-material/West";
 import MultipleStopIcon from "@mui/icons-material/MultipleStop";
-import React, { HTMLAttributes, useState, useEffect } from "react";
-import { Property, Mapping, Direction } from "../utils";
+import React, { HTMLAttributes, useState, useEffect, useRef } from "react";
+import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
 
 interface MappingDisplayProps {
-  nativeProperty: Property;
+  nativePropertyWithMapping: PropertyWithMapping;
   hubspotProperties: Property[];
-  setMappings: Function;
-  objectType: String;
-  mappings: Mapping[];
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -54,116 +51,116 @@ const OptionDisplay = (
 };
 
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
-  const {
-    nativeProperty,
-    hubspotProperties,
-    setMappings,
-    objectType,
-    mappings,
-  } = props;
-  const nativePropertyName = nativeProperty.name || "name";
+  const { nativePropertyWithMapping, hubspotProperties } = props;
+  const { property, mapping } = nativePropertyWithMapping;
+  const { name, label, type, object } = property;
 
-  const [value, setValue] = useState<Property | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [syncDirection, setSyncDirection] = useState<Direction>(
-    Direction.toHubSpot
-  );
+  let { nativeName, direction, hubspotName, id, hubspotLabel } = mapping || {};
 
-  const calculateNewMappings = (
-    mappings: Mapping[],
-    value: Property | null,
-    direction: Direction
-  ): Mapping[] => {
-    const index = mappings.findIndex((mapping) => {
-      return mapping.name == nativePropertyName;
-    });
-    console.log("mapping index", index);
-    if (index === -1 && value != null) {
-      return [
-        ...mappings,
-        { name: nativePropertyName, property: value, direction },
-      ];
-    } else if (value == null) {
-      const newMappings = [...mappings];
-      newMappings.splice(index, 1);
-      return newMappings;
-    } else {
-      const newMappings = [...mappings];
-      newMappings[index] = {
-        name: nativePropertyName,
-        property: value,
-        direction,
-      };
-      return newMappings;
-    }
+  const hubspotProperty: Property = {
+    name: hubspotName,
+    label: hubspotLabel,
+    type,
+    object,
   };
 
+  const [value, setValue] = useState<Property | null>(
+    hubspotProperty.name ? hubspotProperty : null
+  );
+  const [inputValue, setInputValue] = useState<string>("");
+  const [syncDirection, setSyncDirection] = useState<Direction>(
+    direction || Direction.toHubSpot
+  );
+
+  function usePrevious(value: Mapping | null) {
+    const ref = useRef<Mapping | null>();
+
+    useEffect(() => {
+      ref.current = value;
+    }),
+      [value];
+    return ref.current;
+  }
+
+  const previousMapping = usePrevious(mapping);
+  async function deleteMapping(mappingId: number | undefined) {
+    if (mappingId == undefined) {
+    }
+    const response = await fetch(`/api/mappings/${mappingId}`, {
+      method: "DELETE",
+      mode: "cors",
+    });
+    try {
+      const parsedResponse = await response.json();
+      console.log(parsedResponse);
+    } catch (error) {}
+  }
+  useEffect(() => {
+    async function saveMapping() {
+      console.log("hubspot propety in effect", value);
+      if (!value?.name) {
+        return false;
+      }
+      const updatedMapping = {
+        id: id,
+        nativeName: name,
+        hubspotName: value?.name,
+        hubspotLabel: value?.label,
+        object: object,
+        direction: syncDirection,
+      };
+      console.log("updatedMapping", updatedMapping);
+
+      const response = await fetch("/api/mappings", {
+        method: "POST",
+        body: JSON.stringify(updatedMapping),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(await response.json());
+    }
+    saveMapping();
+  }, [value, syncDirection]);
+
+  const handleDirectionChange = (event: SelectChangeEvent) => {
+    console.log(event.target.value);
+    setSyncDirection(event.target.value as Direction);
+  };
   const handleMappingChange = (
     event: React.SyntheticEvent,
     value: Property | null
   ) => {
-    console.log("event", event);
-    console.log("value", value);
-    console.log("mappings in handle change", mappings);
+    console.log(event, value);
 
-    const newMappings = calculateNewMappings(mappings, value, syncDirection);
-    console.log("newMappings in handle change", newMappings);
-
-    setMappings(newMappings);
-    setValue(value);
-    if (value != null) {
-      setInputValue(value.name);
+    if (value) {
+      console.log("value was truthy");
+      hubspotName ? (hubspotName = value.name) : null;
+      setValue(value);
+    } else {
+      const previousValue = previousMapping;
+      console.log(previousValue);
+      deleteMapping(previousMapping?.id);
+      setValue(value);
     }
   };
-  const handleDirectionChange = (
-    event: SelectChangeEvent,
-    hubspotProperty: Property | null
-  ) => {
-    if (hubspotProperty === null) {
-      return false;
-    }
-    console.log(event);
-    const newSyncDirection = event.target.value as Direction;
-    setSyncDirection(newSyncDirection);
-    const newMappings = calculateNewMappings(
-      mappings,
-      hubspotProperty,
-      newSyncDirection
-    );
-    console.log("new mappings in handldirectionchange", newMappings);
-    setMappings(newMappings);
-  };
-  useEffect(() => {
-    const matchingMapping = mappings.find((mapping) => {
-      return mapping.name == nativePropertyName;
-    });
-    console.log("matchingMapping", matchingMapping);
-    if (matchingMapping != undefined) {
-      setValue(matchingMapping.property);
-      setInputValue(matchingMapping.name);
-      setSyncDirection(matchingMapping.direction);
-    }
-  }, []);
-
-  if (hubspotProperties.length == 0) {
-    return <CircularProgress />;
-  }
+  console.log(hubspotProperty, "hubspotProperty");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
         <Item>
-          <Typography variant="body1">{nativeProperty.label}</Typography>
+          <Typography variant="body1">{label}</Typography>
         </Item>
       </Grid>
       <Grid item xs={2}>
         <FormControl sx={{ width: 100 }}>
-          <InputLabel id={`sync-direction-${nativeProperty.label}`}>
+          <InputLabel id={`sync-direction-${label}`}>
             {" "}
             Sync Direction
           </InputLabel>
           <Select
-            labelId={`sync-direction-${nativeProperty.label}`}
-            onChange={(event) => handleDirectionChange(event, value)}
+            labelId={`sync-direction-${label}`}
+            onChange={handleDirectionChange}
             value={syncDirection}
           >
             <MenuItem value={"toHubSpot"}>
@@ -180,15 +177,12 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       </Grid>
       <Grid item xs={4}>
         <Autocomplete
-          className={`hubspot${objectType}Property`}
+          className={`hubspot${object}Property`}
           options={hubspotProperties}
           onChange={handleMappingChange}
           renderInput={(params) => {
             return (
-              <TextField
-                {...params}
-                label={`HubSpot ${objectType} Properties`}
-              />
+              <TextField {...params} label={`HubSpot ${object} Properties`} />
             );
           }}
           renderOption={OptionDisplay}
@@ -200,7 +194,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={nativeProperty.name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
         />
       </Grid>
     </Grid>

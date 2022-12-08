@@ -3,18 +3,10 @@ import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 
 import { Grid, Box, Snackbar, createTheme, ThemeProvider } from "@mui/material";
-import MappingDisplay from "./components/MappingDisplay";
+
 import BasicTabs from "./components/Tabs";
 import Header from "./components/Header";
-import {
-  getHubSpotProperties,
-  getCompanyProperties,
-  getContactProperties,
-  shapeProperties,
-  makeMappingUnique,
-  Property,
-  Mapping,
-} from "./utils";
+
 import MappingContainer from "./components/MappingContainer";
 
 const theme = createTheme({
