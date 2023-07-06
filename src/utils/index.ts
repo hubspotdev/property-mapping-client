@@ -11,12 +11,19 @@ interface PropertisesResponse {
 }
 
 interface Mapping {
-  name: string;
-  property: Property;
-  id?: number;
+  nativeName: string;
+  hubspotLabel?: any;
+  hubspotName: string;
+  id: number;
+  object: Object;
   direction: Direction;
+  customerId: string;
 }
 
+interface PropertyWithMapping {
+  property: Property;
+  mapping: Mapping;
+}
 enum Direction {
   toHubSpot = "toHubSpot",
   toNative = "toNative",
@@ -50,11 +57,11 @@ const shapeProperties = (properties: Property[], object: string) => {
   });
 };
 
-const makeMappingUnique = (mapping: Mapping) => {
-  const { name, property } = mapping;
-  const { label, object, type } = property;
-  return `${name};${property.name};${object};${label}`;
-};
+// const makeMappingUnique = (mapping: Mapping) => {
+//   const { nativeName, hubspotProperty } = mapping;
+//   const { label, object, type } = hubspotProperty;
+//   return `${nativeName};${hubspotProperty.name};${object};${label}`;
+// };
 
 const getMappingNameFromDifferenceArray = (mappingStrings: string[]) => {
   const mappingString = mappingStrings[0]; // should only ever be one item in the array since this fires on click
@@ -83,10 +90,10 @@ export {
   getCompanyProperties,
   getContactProperties,
   shapeProperties,
-  makeMappingUnique,
+  //makeMappingUnique,
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
   PROPERTY_TYPE_COMPATIBILITY,
   Direction,
 };
-export type { Mapping, Property };
+export type { Mapping, Property, PropertyWithMapping };
