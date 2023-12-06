@@ -2,26 +2,13 @@ import React, { useEffect, useState, useRef } from "react";
 
 import "./App.css";
 
-import { Grid, Box, Snackbar, createTheme, ThemeProvider } from "@mui/material";
+import { Grid, Box, Snackbar, ThemeProvider } from "@mui/material";
 
 import BasicTabs from "./components/Tabs";
 import Header from "./components/Header";
 
 import MappingContainer from "./components/MappingContainer";
-
-const theme = createTheme({
-  components: {
-    MuiAutocomplete: {
-      styleOverrides: {
-        option: {
-          "&.MuiAutocomplete-option": {
-            justifyContent: "space-between",
-          },
-        },
-      },
-    },
-  },
-});
+import { theme } from './theme';
 
 function App() {
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
