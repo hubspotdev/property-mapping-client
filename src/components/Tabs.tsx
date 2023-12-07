@@ -34,7 +34,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function BasicTabs(props: {
+function TabContainer(props: {
   objects: String[];
 
   children: React.ReactNode[];
@@ -77,4 +77,4 @@ function BasicTabs(props: {
     </Box>
   );
 }
-export default BasicTabs;
+export default TabContainer;
