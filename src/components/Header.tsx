@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 
 function Header() {
@@ -12,7 +12,17 @@ function Header() {
     getInstallUrl();
   }, []);
 
-  return <Button href={installUrl}>Install</Button>;
+  return(
+    <><Grid id="headerContainer" xs={12} item className="App-header">
+        <Grid item xs={5}>{""}</Grid>
+        <Grid item xs={5}>Header Content Here</Grid>
+        <Grid item xs={2}>
+          <Button variant='contained'  href={installUrl}>Install</Button>
+        </Grid>
+
+      </Grid>
+
+</>);
 }
 
 export default Header;
