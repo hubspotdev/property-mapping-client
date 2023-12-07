@@ -8,7 +8,7 @@ import {
 import EastIcon from "@mui/icons-material/East";
 import WestIcon from "@mui/icons-material/West";
 import MultipleStopIcon from "@mui/icons-material/MultipleStop";
-import React from "react";
+
 import { Direction } from "../utils";
 
 export function DirectionSelection(label: string, handleDirectionChange: (event: SelectChangeEvent) => void, syncDirection: Direction) {

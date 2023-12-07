@@ -1,12 +1,11 @@
 import React, { Children, useState } from "react";
 
 import {
-  Grid,
+
   Box,
-  SimplePaletteColorOptions,
+
   Tabs,
   Tab,
-  Typography,
 } from "@mui/material";
 interface TabPanelProps {
   children?: React.ReactNode;

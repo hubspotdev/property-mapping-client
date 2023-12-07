@@ -4,7 +4,6 @@ import {
   Grid,
   Typography,
   Paper,
-  CircularProgress,
   SelectChangeEvent,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";

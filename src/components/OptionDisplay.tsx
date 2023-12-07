@@ -1,5 +1,5 @@
 import { AutocompleteRenderOptionState } from "@mui/material";
-import React, { HTMLAttributes } from "react";
+import { HTMLAttributes } from "react";
 import { Property } from "../utils";
 
 export const OptionDisplay = (

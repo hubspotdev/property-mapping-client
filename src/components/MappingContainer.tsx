@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import MappingDisplay from "./MappingDisplay";
 
 import {
@@ -7,11 +7,6 @@ import {
   getContactProperties,
   shapeProperties,
   Property,
-  Mapping,
-  getMappingNameFromDifferenceArray,
-  displayErrorMessage,
-  PROPERTY_TYPE_COMPATIBILITY,
-  Direction,
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
@@ -21,10 +16,8 @@ function MappingContainer(props: {
   setDisplaySnackBar: Function;
   setSnackbarMessage: Function;
 }) {
-  const { objectType, setDisplaySnackBar, setSnackbarMessage } = props;
+  const { objectType} = props;
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
-  const [nativeProperties, setNativeProperties] = useState<Property[]>([]);
-  const [mappings, setMappings] = useState<Mapping[]>();
   const [nativePropertiesWithMappings, setNativePropertiesWithMappings] =
     useState<PropertyWithMapping[]>();
 
