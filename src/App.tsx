@@ -2,26 +2,14 @@ import React, { useEffect, useState, useRef } from "react";
 
 import "./App.css";
 
-import { Grid, Box, Snackbar, createTheme, ThemeProvider } from "@mui/material";
+import { Grid, Box, Snackbar, ThemeProvider } from "@mui/material";
 
-import BasicTabs from "./components/Tabs";
+import TabContainer from "./components/Tabs";
 import Header from "./components/Header";
 
 import MappingContainer from "./components/MappingContainer";
-
-const theme = createTheme({
-  components: {
-    MuiAutocomplete: {
-      styleOverrides: {
-        option: {
-          "&.MuiAutocomplete-option": {
-            justifyContent: "space-between",
-          },
-        },
-      },
-    },
-  },
-});
+import { theme } from './theme';
+import { SupportedObjectTypes } from './utils';
 
 function App() {
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
@@ -49,18 +37,20 @@ function App() {
               onClose={() => setDisplaySnackBar(false)}
               anchorOrigin={{ vertical: "top", horizontal: "center" }}
             />
-            <BasicTabs objects={["Contact", "Company"]}>
+            <TabContainer objects={["Contact", "Company"]}>
+
+
               <MappingContainer
-                objectType="Contact"
+                objectType={SupportedObjectTypes.contacts}
                 setDisplaySnackBar={setDisplaySnackBar}
                 setSnackbarMessage={setSnackbarMessage}
               />
               <MappingContainer
-                objectType="Company"
+                objectType={SupportedObjectTypes.companies}
                 setDisplaySnackBar={setDisplaySnackBar}
                 setSnackbarMessage={setSnackbarMessage}
               />
-            </BasicTabs>
+            </TabContainer>
           </Grid>
           <Grid id="footerContainer" xs={12} item className="App-footer">
             <p> Footer Content here</p>

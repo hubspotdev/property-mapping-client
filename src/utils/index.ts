@@ -30,6 +30,11 @@ enum Direction {
   biDirectional = "biDirectional",
 }
 
+enum SupportedObjectTypes {
+  contacts = "Contact",
+  companies = "Company"
+}
+
 const getHubSpotProperties = async (): Promise<PropertisesResponse> => {
   const response = await fetch("/api/hubspot-properties");
   const properties = await response.json();
@@ -95,5 +100,6 @@ export {
   displayErrorMessage,
   PROPERTY_TYPE_COMPATIBILITY,
   Direction,
+  SupportedObjectTypes
 };
 export type { Mapping, Property, PropertyWithMapping };

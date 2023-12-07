@@ -4,20 +4,14 @@ import {
   Grid,
   Typography,
   Paper,
-  AutocompleteRenderOptionState,
   CircularProgress,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import EastIcon from "@mui/icons-material/East";
-import WestIcon from "@mui/icons-material/West";
-import MultipleStopIcon from "@mui/icons-material/MultipleStop";
-import React, { HTMLAttributes, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
+import { DirectionSelection } from './DirectionSelection';
+import { OptionDisplay } from './OptionDisplay';
 
 interface MappingDisplayProps {
   nativePropertyWithMapping: PropertyWithMapping;
@@ -32,23 +26,6 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "left",
   color: theme.palette.text.secondary,
 }));
-
-const OptionDisplay = (
-  props: HTMLAttributes<HTMLLIElement>,
-  option: Property,
-  state: AutocompleteRenderOptionState
-): JSX.Element => {
-  return (
-    <li {...props} key={option.name}>
-      {" "}
-      {option.label}
-      <span className="option-name">
-        {" "}
-        {"    "} {option.name}
-      </span>{" "}
-    </li>
-  );
-};
 
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
@@ -153,27 +130,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         </Item>
       </Grid>
       <Grid item xs={2}>
-        <FormControl sx={{ width: 100 }}>
-          <InputLabel id={`sync-direction-${label}`}>
-            {" "}
-            Sync Direction
-          </InputLabel>
-          <Select
-            labelId={`sync-direction-${label}`}
-            onChange={handleDirectionChange}
-            value={syncDirection}
-          >
-            <MenuItem value={"toHubSpot"}>
-              <EastIcon />
-            </MenuItem>
-            <MenuItem value={"toNative"}>
-              <WestIcon />
-            </MenuItem>
-            <MenuItem value={"biDirectional"}>
-              <MultipleStopIcon />
-            </MenuItem>
-          </Select>
-        </FormControl>
+        {DirectionSelection(label, handleDirectionChange, syncDirection)}
       </Grid>
       <Grid item xs={4}>
         <Autocomplete
@@ -202,3 +159,5 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 }
 
 export default MappingDisplay;
+
+

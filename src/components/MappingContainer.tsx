@@ -13,10 +13,11 @@ import {
   PROPERTY_TYPE_COMPATIBILITY,
   Direction,
   PropertyWithMapping,
+  SupportedObjectTypes,
 } from "../utils";
 import { CircularProgress } from "@mui/material";
 function MappingContainer(props: {
-  objectType: "Contact" | "Company";
+  objectType: SupportedObjectTypes
   setDisplaySnackBar: Function;
   setSnackbarMessage: Function;
 }) {
@@ -39,12 +40,12 @@ function MappingContainer(props: {
     async function getHubspotProperties() {
       const hubspotProperties = await getHubSpotProperties();
       switch (objectType) {
-        case "Contact":
+        case SupportedObjectTypes.contacts:
           setHubSpotProperties(
             shapeProperties(getContactProperties(hubspotProperties), "Contact")
           );
           break;
-        case "Company":
+        case SupportedObjectTypes.companies:
           setHubSpotProperties(
             shapeProperties(getCompanyProperties(hubspotProperties), "Company")
           );
