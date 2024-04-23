@@ -10,7 +10,8 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
-import { CircularProgress } from "@mui/material";
+import { Autocomplete, CircularProgress, Grid, TextField, Typography } from "@mui/material";
+import { OptionDisplay } from './OptionDisplay';
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
   setDisplaySnackBar: Function;
@@ -65,6 +66,19 @@ function MappingContainer(props: {
     <CircularProgress />
   ) : (
     <>
+     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
+      <Grid item xs={4}>
+
+          <Typography variant="h5" gutterBottom>Native Properties</Typography>
+
+      </Grid>
+      <Grid item xs={3}>
+        <Typography variant="h5" gutterBottom> Sync Direction</Typography>
+      </Grid>
+      <Grid item xs={4}>
+        <Typography variant="h5" gutterBottom> HubSpot Properties</Typography>
+      </Grid>
+    </Grid>
       {filterPropertiesByObjectType(nativePropertiesWithMappings).map(
         (nativePropertyWithMapping) => {
           return (
