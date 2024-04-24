@@ -10,7 +10,9 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
-import { CircularProgress } from "@mui/material";
+import { Autocomplete, CircularProgress, TextField } from "@mui/material";
+import { OptionDisplay } from './OptionDisplay';
+import { MappingHeader } from './MappingHeaders';
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
   setDisplaySnackBar: Function;
@@ -65,6 +67,7 @@ function MappingContainer(props: {
     <CircularProgress />
   ) : (
     <>
+     <MappingHeader/>
       {filterPropertiesByObjectType(nativePropertiesWithMappings).map(
         (nativePropertyWithMapping) => {
           return (
@@ -80,3 +83,4 @@ function MappingContainer(props: {
   );
 }
 export default MappingContainer;
+
