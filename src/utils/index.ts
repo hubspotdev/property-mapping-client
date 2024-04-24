@@ -3,6 +3,7 @@ interface Property {
   label: string;
   type: string;
   object: string;
+  unique?: boolean;
 }
 
 interface PropertisesResponse {

@@ -10,7 +10,8 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
-import { Button, CircularProgress, Drawer } from "@mui/material";
+import { Button, CircularProgress, Drawer, Grid } from "@mui/material";
+
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
   setDisplaySnackBar: Function;
@@ -85,7 +86,7 @@ function MappingContainer(props: {
         }
       )}
       <Button onClick={onNewPropertyClick}> Add Property</Button>
-      <Drawer anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}><PropertyEditor/> </Drawer>
+      <Drawer PaperProps={{elevation:3}} anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}>    <Grid container spacing={12} columns={12}> <Grid item ><PropertyEditor/></Grid> </Grid></Drawer>
     </>
 
   );
