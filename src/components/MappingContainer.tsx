@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MappingDisplay from "./MappingDisplay";
-
+import PropertyEditor from './PropertyEditor';
 import {
   getHubSpotProperties,
   getCompanyProperties,
@@ -10,16 +10,24 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Drawer } from "@mui/material";
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
   setDisplaySnackBar: Function;
   setSnackbarMessage: Function;
 }) {
   const { objectType} = props;
+
+
+
+  const [shouldShowPropertyEditor, setShouldShowPropertyEditor] = useState(false)
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
   const [nativePropertiesWithMappings, setNativePropertiesWithMappings] =
     useState<PropertyWithMapping[]>();
+
+  const onNewPropertyClick = () =>{
+    setShouldShowPropertyEditor(!shouldShowPropertyEditor)
+  }
 
   useEffect(() => {
     async function getNativePropertiesWithMappings() {
@@ -76,7 +84,10 @@ function MappingContainer(props: {
           );
         }
       )}
+      <Button onClick={onNewPropertyClick}> Add Property</Button>
+      <Drawer anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}><PropertyEditor/> </Drawer>
     </>
+
   );
 }
 export default MappingContainer;
