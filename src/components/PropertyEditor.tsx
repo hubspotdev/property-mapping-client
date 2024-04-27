@@ -1,5 +1,5 @@
 
-import { AppBar, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Box, Select, SelectChangeEvent, TextField, ToggleButton, Typography, Menu , Checkbox} from '@mui/material';
+import { AppBar, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Box, Select, SelectChangeEvent, TextField, ToggleButton, Typography, Menu , Checkbox, Button, Alert, Collapse} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {SupportedObjectTypes} from '../utils'
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -32,7 +32,7 @@ function PropertyEditor( ){
     setPropertyName(dbSafeString)
   }
 
-  const [propertyTpe, setPropertyType] = useState("")
+  const [propertyType, setPropertyType] = useState("")
   const onPropertyTypeChange = (event:SelectChangeEvent<string>) =>{
     setPropertyType(event.target.value)
   }
@@ -44,6 +44,28 @@ function PropertyEditor( ){
   const [enforcesUniquness, setEnforceUniquness] = useState(false)
   const onUniqunessChange =( event:ChangeEvent<HTMLInputElement>) =>{
     setEnforceUniquness(event.target.checked)
+  }
+
+  const [hasErrors, setHasErrors] = useState(false)
+
+const createNewProperty = async (body:any) =>{
+  console.log('body',body)
+  const response = await fetch("/api/native-properties/",{body:JSON.stringify(body), method:"POST",        headers: {
+    "Content-Type": "application/json",
+  },})
+  return response
+}
+
+  const handleNewPropertyCreateRequest = async () =>{
+    if(!propertyLabel|| !propertyName || !propertyType || !objectType){
+      setHasErrors(true)
+    }
+    const propertyInfo ={
+      propertyLabel, propertyName, propertyType, objectType, enforcesUniquness
+    }
+    const createNewPropertyResponse = await createNewProperty(propertyInfo)
+    console.log(createNewPropertyResponse)
+
   }
 
   return(
@@ -70,7 +92,7 @@ function PropertyEditor( ){
   <Select
     labelId="property-type"
     id="property-type-select"
-    value={propertyTpe}
+    value={propertyType}
     label="Type"
     onChange={onPropertyTypeChange}
   >
@@ -102,6 +124,12 @@ function PropertyEditor( ){
   <FormControlLabel control={<Checkbox checked={enforcesUniquness} onChange={onUniqunessChange}/> } label="Enforce Uniquness"/>
 </FormGroup>
 </FormField>
+<Grid item spacing={2}>
+<Button variant='contained' onClick={handleNewPropertyCreateRequest}> Submit</Button>
+</Grid>
+<Collapse in={hasErrors}>
+<Alert severity="error" >We are missing information needed to create the property</Alert>
+</Collapse>
 </>
 
   )
