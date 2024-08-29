@@ -10,6 +10,7 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
+
 import { Button, CircularProgress, Drawer, Grid } from "@mui/material";
 
 function MappingContainer(props: {
@@ -74,6 +75,7 @@ function MappingContainer(props: {
     <CircularProgress />
   ) : (
     <>
+     <MappingHeader/>
       {filterPropertiesByObjectType(nativePropertiesWithMappings).map(
         (nativePropertyWithMapping) => {
           return (
@@ -92,3 +94,4 @@ function MappingContainer(props: {
   );
 }
 export default MappingContainer;
+

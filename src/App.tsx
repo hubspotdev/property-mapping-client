@@ -19,13 +19,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={12} columns={12}>
-          <Grid id="headerContainer" xs={12} item className="App-header">
-            <Grid item>
-              {" "}
-              <p>Header content here</p>
-              <Header />
-            </Grid>
-          </Grid>
+          <Header></Header>
           <Grid id="sideBarContainer" xs={2} item>
             <p>Side Bar Content here</p>
           </Grid>
