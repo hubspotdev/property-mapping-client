@@ -1,7 +1,7 @@
 
 import { AppBar, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Box, Select, SelectChangeEvent, TextField, ToggleButton, Typography, Menu , Checkbox, Button, Alert, Collapse} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {SupportedObjectTypes} from '../utils'
+import {Property, PropertyWithMapping, SupportedObjectTypes} from '../utils'
 import React, { ChangeEvent, useEffect, useState } from "react";
 
 
@@ -22,8 +22,9 @@ const capitalizeFirstLetter = (string:string) =>{
 }
 
 
-function PropertyEditor( ){
+function PropertyEditor(props:{onNewPropertyCreate: React.Dispatch<React.SetStateAction<boolean>>, setNativePropertiesWithMappings: React.Dispatch<React.SetStateAction<PropertyWithMapping[]|undefined>>, nativePropertiesWithMappings:PropertyWithMapping[]} ){
 
+  const {onNewPropertyCreate, setNativePropertiesWithMappings, nativePropertiesWithMappings } = props
   const [propertyLabel, setPropertyLabel] = useState("")
   const [propertyName, setPropertyName] = useState("")
   const onLabelChange = (event:ChangeEvent<HTMLInputElement> )=>{
@@ -64,6 +65,14 @@ const createNewProperty = async (body:any) =>{
       propertyLabel, propertyName, propertyType, objectType, enforcesUniquness
     }
     const createNewPropertyResponse = await createNewProperty(propertyInfo)
+    if(createNewPropertyResponse.status == 200){
+      const newPropertyWithMapping:PropertyWithMapping = {
+        property:{name:propertyName, label:propertyLabel, type:propertyType, object:objectType, unique:enforcesUniquness},
+
+      }
+      setNativePropertiesWithMappings([...nativePropertiesWithMappings,newPropertyWithMapping])
+      onNewPropertyCreate(false)
+    }
     console.log(createNewPropertyResponse)
 
   }

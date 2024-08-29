@@ -23,7 +23,7 @@ interface Mapping {
 
 interface PropertyWithMapping {
   property: Property;
-  mapping: Mapping;
+  mapping?: Mapping;
 }
 enum Direction {
   toHubSpot = "toHubSpot",

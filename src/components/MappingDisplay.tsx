@@ -26,29 +26,32 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function MappingDisplay(props: MappingDisplayProps): JSX.Element {
+function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
   const { name, label, type, object } = property;
 
-  let { nativeName, direction, hubspotName, id, hubspotLabel } = mapping || {};
 
-  const hubspotProperty: Property = {
-    name: hubspotName,
-    label: hubspotLabel,
+  //let {  direction, hubspotName, id, hubspotLabel } = mapping ;
+
+  const hubspotProperty: Property | null = mapping ?  {
+    name: mapping.hubspotName,
+    label: mapping.hubspotLabel,
     type,
     object,
-  };
+  }:null
+
+ ;
 
   const [value, setValue] = useState<Property | null>(
-    hubspotProperty.name ? hubspotProperty : null
+    hubspotProperty?.name ? hubspotProperty : null
   );
   const [inputValue, setInputValue] = useState<string>("");
   const [syncDirection, setSyncDirection] = useState<Direction>(
-    direction || Direction.toHubSpot
+    mapping?.direction || Direction.toHubSpot
   );
 
-  function usePrevious(value: Mapping | null) {
+  function usePrevious(value: Mapping | null| undefined) {
     const ref = useRef<Mapping | null>();
 
     useEffect(() => {
@@ -78,7 +81,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         return false;
       }
       const updatedMapping = {
-        id: id,
+        id: mapping?.id,
         nativeName: name,
         hubspotName: value?.name,
         hubspotLabel: value?.label,
@@ -111,7 +114,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
     if (value) {
       console.log("value was truthy");
-      hubspotName ? (hubspotName = value.name) : null;
+      mapping?.hubspotName ? (mapping.hubspotName = value.name) : null;
       setValue(value);
     } else {
       const previousValue = previousMapping;
@@ -129,6 +132,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         </Item>
       </Grid>
       <Grid item xs={2}>
+
         {DirectionSelection(label, handleDirectionChange, syncDirection)}
       </Grid>
       <Grid item xs={4}>
