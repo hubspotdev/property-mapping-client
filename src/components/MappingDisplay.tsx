@@ -5,10 +5,10 @@ import {
   Typography,
   Paper,
   SelectChangeEvent,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import React, { useState, useEffect, useRef } from "react";
-import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import React, { useState, useEffect, useRef } from 'react';
+import { Property, Mapping, Direction, PropertyWithMapping } from '../utils';
 import { DirectionSelection } from './DirectionSelection';
 import { OptionDisplay } from './OptionDisplay';
 
@@ -18,11 +18,11 @@ interface MappingDisplayProps {
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(2),
   margin: theme.spacing(2),
-  textAlign: "left",
+  textAlign: 'left',
   color: theme.palette.text.secondary,
 }));
 
@@ -30,8 +30,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
   const { name, label, type, object } = property;
-
-  let { nativeName, direction, hubspotName, id, hubspotLabel } = mapping || {};
+  let { hubspotName } = mapping || {};
+  const { direction, id, hubspotLabel } = mapping || {};
 
   const hubspotProperty: Property = {
     name: hubspotName,
@@ -43,40 +43,46 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const [value, setValue] = useState<Property | null>(
     hubspotProperty.name ? hubspotProperty : null
   );
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>('');
   const [syncDirection, setSyncDirection] = useState<Direction>(
     direction || Direction.toHubSpot
   );
 
-  function usePrevious(value: Mapping | null) {
+  function usePrevious(value: Mapping | null): Mapping | null | undefined {
     const ref = useRef<Mapping | null>();
-
+    console.log('useRef++', ref);
     useEffect(() => {
       ref.current = value;
     }),
-      [value];
+    [value];
     return ref.current;
   }
 
   const previousMapping = usePrevious(mapping);
-  async function deleteMapping(mappingId: number | undefined) {
+  async function deleteMapping(mappingId: number | undefined):Promise<void> {
     if (mappingId == undefined) {
+      console.error('Mapping ID is undefined');
     }
     const response = await fetch(`/api/mappings/${mappingId}`, {
-      method: "DELETE",
-      mode: "cors",
+      method: 'DELETE',
+      mode: 'cors',
     });
     try {
-      const parsedResponse = await response.json();
-      console.log(parsedResponse);
-    } catch (error) {}
+      const parsedResponse = (await response.json()) as Mapping;
+      console.log('parsed response+=',parsedResponse);
+    } catch (error: any) {
+      console.error(error);
+    }
   }
+
   useEffect(() => {
-    async function saveMapping() {
-      console.log("hubspot propety in effect", value);
+    async function saveMapping(): Promise<void | boolean> {
+      console.log('hubspot property in effect', value);
+
       if (!value?.name) {
         return false;
       }
+
       const updatedMapping = {
         id: id,
         nativeName: name,
@@ -85,42 +91,56 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         object: object,
         direction: syncDirection,
       };
-      console.log("updatedMapping", updatedMapping);
 
-      const response = await fetch("/api/mappings", {
-        method: "POST",
-        body: JSON.stringify(updatedMapping),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(await response.json());
+      console.log('updatedMapping', updatedMapping);
+
+      try {
+        const response = await fetch('/api/mappings', {
+          method: 'POST',
+          body: JSON.stringify(updatedMapping),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = (await response.json()) as Mapping;
+        console.log('data in saveMapping+=',data);
+      } catch (error) {
+        console.error('Error while saving mapping:', error);
+      }
     }
-    saveMapping();
+    saveMapping()
+      .catch(err => console.error(err));
+
   }, [value, syncDirection]);
 
-  const handleDirectionChange = (event: SelectChangeEvent) => {
+  const handleDirectionChange = (event: SelectChangeEvent):void => {
     console.log(event.target.value);
     setSyncDirection(event.target.value as Direction);
   };
-  const handleMappingChange = (
+
+  const handleMappingChange = async (
     event: React.SyntheticEvent,
     value: Property | null
-  ) => {
+  ): Promise<void> => {
     console.log(event, value);
 
     if (value) {
-      console.log("value was truthy");
+      console.log('value was truthy');
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
       const previousValue = previousMapping;
-      console.log(previousValue);
-      deleteMapping(previousMapping?.id);
+      console.log(previousValue, 'previousValue');
+      await deleteMapping(previousMapping?.id);
       setValue(value);
     }
   };
-  console.log(hubspotProperty, "hubspotProperty");
+  // console.log(hubspotProperty, "hubspotProperty");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -150,7 +170,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={name.endsWith('required') ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
         />
       </Grid>
     </Grid>
@@ -158,5 +178,3 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 }
 
 export default MappingDisplay;
-
-
