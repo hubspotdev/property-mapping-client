@@ -63,6 +63,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     if (mappingId == undefined) {
       console.error('Mapping ID is undefined');
     }
+    //TODO fix this as part of deleteMappings Fix
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: 'DELETE',
       mode: 'cors',
@@ -155,7 +157,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         <Autocomplete
           className={`hubspot${object}Property`}
           options={hubspotProperties}
-          onChange={handleMappingChange}
+          onChange={void handleMappingChange}
           renderInput={(params) => {
             return (
               <TextField {...params} label={`HubSpot ${object} Properties`} />
