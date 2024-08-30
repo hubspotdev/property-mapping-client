@@ -8,10 +8,10 @@ import TabContainer from "./components/Tabs";
 import Header from "./components/Header";
 
 import MappingContainer from "./components/MappingContainer";
-import { theme } from './theme';
-import { SupportedObjectTypes } from './utils';
+import { theme } from "./theme";
+import { SupportedObjectTypes } from "./utils";
 
-function App() {
+function App(): JSX.Element {
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -32,8 +32,6 @@ function App() {
               anchorOrigin={{ vertical: "top", horizontal: "center" }}
             />
             <TabContainer objects={["Contact", "Company"]}>
-
-
               <MappingContainer
                 objectType={SupportedObjectTypes.contacts}
                 setDisplaySnackBar={setDisplaySnackBar}

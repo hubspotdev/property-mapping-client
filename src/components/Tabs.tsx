@@ -1,19 +1,17 @@
-import React, { Children, useState } from "react";
-
+import React, { useState } from "react";
 import {
-
   Box,
-
   Tabs,
   Tab,
 } from "@mui/material";
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
 
-function TabPanel(props: TabPanelProps) {
+function TabPanel(props: TabPanelProps): JSX.Element {
   const { children, value, index, ...other } = props;
 
   return (
@@ -34,18 +32,22 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function TabContainer(props: {
-  objects: String[];
-
+  objects: string[];
   children: React.ReactNode[];
-}) {
+}):JSX.Element {
   const { objects, children } = props;
   const [activeTab, setActiveTab] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: number): void => {
     setActiveTab(newValue);
   };
 
-  function a11yProps(index: number) {
+  interface A11yProps {
+    id: string;
+    "aria-controls": string;
+  }
+
+  function a11yProps(index: number):A11yProps {
     return {
       id: `simple-tab-${index}`,
       "aria-controls": `simple-tabpanel-${index}`,

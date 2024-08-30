@@ -9,8 +9,8 @@ import {
 import { styled } from "@mui/material/styles";
 import React, { useState, useEffect, useRef } from "react";
 import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
-import { DirectionSelection } from './DirectionSelection';
-import { OptionDisplay } from './OptionDisplay';
+import { DirectionSelection } from "./DirectionSelection";
+import { OptionDisplay } from "./OptionDisplay";
 
 interface MappingDisplayProps {
   nativePropertyWithMapping: PropertyWithMapping;
@@ -30,8 +30,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
   const { name, label, type, object } = property;
-
-  let { nativeName, direction, hubspotName, id, hubspotLabel } = mapping || {};
+  let { hubspotName } = mapping || {};
+  const { direction, id, hubspotLabel } = mapping || {};
 
   const hubspotProperty: Property = {
     name: hubspotName,
@@ -48,35 +48,41 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     direction || Direction.toHubSpot
   );
 
-  function usePrevious(value: Mapping | null) {
+  function usePrevious(value: Mapping | null): Mapping | null | undefined {
     const ref = useRef<Mapping | null>();
-
     useEffect(() => {
       ref.current = value;
     }),
-      [value];
+    [value];
     return ref.current;
   }
 
   const previousMapping = usePrevious(mapping);
-  async function deleteMapping(mappingId: number | undefined) {
+  async function deleteMapping(mappingId: number | undefined):Promise<void> {
     if (mappingId == undefined) {
+      console.error("Mapping ID is undefined");
     }
+    //TODO fix this as part of deleteMappings Fix
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",
     });
     try {
-      const parsedResponse = await response.json();
-      console.log(parsedResponse);
-    } catch (error) {}
+      const parsedResponse = (await response.json()) as Mapping;
+      console.log("parsed response+=",parsedResponse);
+    } catch (error: any) {
+      console.error(error);
+    }
   }
+
   useEffect(() => {
-    async function saveMapping() {
-      console.log("hubspot propety in effect", value);
+    async function saveMapping(): Promise<void | boolean> {
+      console.log("hubspot property in effect", value);
+
       if (!value?.name) {
         return false;
       }
+
       const updatedMapping = {
         id: id,
         nativeName: name,
@@ -85,42 +91,54 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         object: object,
         direction: syncDirection,
       };
+
       console.log("updatedMapping", updatedMapping);
 
-      const response = await fetch("/api/mappings", {
-        method: "POST",
-        body: JSON.stringify(updatedMapping),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(await response.json());
+      try {
+        const response = await fetch("/api/mappings", {
+          method: "POST",
+          body: JSON.stringify(updatedMapping),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = (await response.json()) as Mapping;
+        console.log("data in saveMapping+=",data);
+      } catch (error) {
+        console.error("Error while saving mapping:", error);
+      }
     }
-    saveMapping();
+    saveMapping()
+      .catch(err => console.error(err));
+
   }, [value, syncDirection]);
 
-  const handleDirectionChange = (event: SelectChangeEvent) => {
+  const handleDirectionChange = (event: SelectChangeEvent):void => {
     console.log(event.target.value);
     setSyncDirection(event.target.value as Direction);
   };
-  const handleMappingChange = (
+
+  const handleMappingChange = async (
     event: React.SyntheticEvent,
     value: Property | null
-  ) => {
-    console.log(event, value);
-
+  ): Promise<void> => {
     if (value) {
       console.log("value was truthy");
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
       const previousValue = previousMapping;
-      console.log(previousValue);
-      deleteMapping(previousMapping?.id);
+      console.log(previousValue, "previousValue");
+      await deleteMapping(previousMapping?.id);
       setValue(value);
     }
   };
-  console.log(hubspotProperty, "hubspotProperty");
+  // console.log(hubspotProperty, "hubspotProperty");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -158,5 +176,3 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 }
 
 export default MappingDisplay;
-
-

@@ -1,3 +1,5 @@
+import { PropertySignature } from "typescript";
+
 interface Property {
   name: string;
   label: string;
@@ -5,17 +7,18 @@ interface Property {
   object: string;
 }
 
-interface PropertisesResponse {
+interface PropertiesResponse {
   contactProperties: any;
   companyProperties: any;
 }
 
 interface Mapping {
   nativeName: string;
-  hubspotLabel?: any;
+  //testing hubspotLabel value type
+  hubspotLabel: string;
   hubspotName: string;
   id: number;
-  object: Object;
+  object: string;
   direction: Direction;
   customerId: string;
 }
@@ -35,23 +38,24 @@ enum SupportedObjectTypes {
   companies = "Company"
 }
 
-const getHubSpotProperties = async (): Promise<PropertisesResponse> => {
+const getHubSpotProperties = async (): Promise<PropertiesResponse> => {
   const response = await fetch("/api/hubspot-properties");
-  const properties = await response.json();
+  const properties = (await response.json()) as PropertiesResponse;
   return properties;
 };
 
-const getContactProperties = (hubspotProperties: PropertisesResponse) => {
-  const contactProperties = hubspotProperties.contactProperties;
+const getContactProperties = (hubspotProperties: PropertiesResponse): Property[] => {
+  const contactProperties = (hubspotProperties.contactProperties) as Property[];
   return contactProperties;
 };
 
-const getCompanyProperties = (hubspotProperties: PropertisesResponse) => {
-  const companyProperties = hubspotProperties.companyProperties;
+const getCompanyProperties = (hubspotProperties: PropertiesResponse):Property[] => {
+  const companyProperties = (hubspotProperties.companyProperties) as Property[];
   return companyProperties;
 };
 
-const shapeProperties = (properties: Property[], object: string) => {
+//object is defined as type string but in Mapping it is defined as type object, so I switched Mapping.object to type string
+const shapeProperties = (properties: Property[], object: string): Property[] => {
   return properties.map((property) => {
     return {
       name: property.name,
@@ -68,14 +72,14 @@ const shapeProperties = (properties: Property[], object: string) => {
 //   return `${nativeName};${hubspotProperty.name};${object};${label}`;
 // };
 
-const getMappingNameFromDifferenceArray = (mappingStrings: string[]) => {
+const getMappingNameFromDifferenceArray = (mappingStrings: string[]):string => {
   const mappingString = mappingStrings[0]; // should only ever be one item in the array since this fires on click
   const valuesArray = mappingString.split(";");
   const mappingName = valuesArray[0];
   return mappingName;
 };
 
-const displayErrorMessage = (error: any) => {
+const displayErrorMessage = (error: any):string => {
   if (error instanceof Error) {
     return `Something went wrong: ${error.message}`;
   }
