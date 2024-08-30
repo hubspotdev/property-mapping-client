@@ -50,7 +50,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   function usePrevious(value: Mapping | null): Mapping | null | undefined {
     const ref = useRef<Mapping | null>();
-    console.log("useRef++", ref);
     useEffect(() => {
       ref.current = value;
     }),
@@ -128,8 +127,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     event: React.SyntheticEvent,
     value: Property | null
   ): Promise<void> => {
-    console.log(event, value);
-
     if (value) {
       console.log("value was truthy");
       hubspotName ? (hubspotName = value.name) : null;
@@ -156,7 +153,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         <Autocomplete
           className={`hubspot${object}Property`}
           options={hubspotProperties}
-          onChange={void handleMappingChange}
+          onChange={handleMappingChange}
           renderInput={(params) => {
             return (
               <TextField {...params} label={`HubSpot ${object} Properties`} />
