@@ -64,7 +64,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       console.error("Mapping ID is undefined");
     }
     //TODO fix this as part of deleteMappings Fix
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",

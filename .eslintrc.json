@@ -1,36 +1,3 @@
-// {
-//   "extends": ["prettier"]
-// }
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
-  "extends": [
-    "prettier",
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking"
-  ],
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "ecmaVersion": 2020,
-    "sourceType": "module"
-  },
-  "rules": {
-    "quotes": ["error", "double"],
-    "semi": ["error", "always"],
-    "no-multiple-empty-lines": ["error", { "max": 1 }], // Apply to all files
-    "indent": ["error", 2], // Enforce consistent indentation
-    "promise/no-promise-in-callback": "off",
-    "@typescript-eslint/explicit-member-accessibility": "error",
-    "@typescript-eslint/explicit-function-return-type": ["error", {
-      "allowExpressions": true
-    }],
-    "@typescript-eslint/no-var-requires": "error",
-    "@typescript-eslint/no-floating-promises": "error",
-    "@typescript-eslint/no-unsafe-assignment": "error",
-    "@typescript-eslint/no-unsafe-member-access": "error",
-    "@typescript-eslint/no-unsafe-return": "error",
-    "@typescript-eslint/no-unsafe-call": "error"
-  }
+  "extends": ["prettier"]
 }
