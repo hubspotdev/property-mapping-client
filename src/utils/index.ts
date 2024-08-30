@@ -54,7 +54,7 @@ const getCompanyProperties = (hubspotProperties: PropertiesResponse):Property[] 
   return companyProperties;
 };
 
-//object is defined as type string but in Mapping it is defined as type object
+//object is defined as type string but in Mapping it is defined as type object, so I switched Mapping.object to type string
 const shapeProperties = (properties: Property[], object: string): Property[] => {
   return properties.map((property) => {
     return {
