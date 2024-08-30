@@ -5,13 +5,13 @@ const {
   createProxyMiddleware,
   fixRequestBody,
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-} = require('http-proxy-middleware');
+} = require("http-proxy-middleware");
 
 module.exports = function (app) {
   app.use(
-    '/api',
+    "/api",
     createProxyMiddleware({
-      target: 'http://localhost:3001',
+      target: "http://localhost:3001",
       changeOrigin: true,
     })
   );

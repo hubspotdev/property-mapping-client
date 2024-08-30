@@ -1,6 +1,6 @@
-import { useEffect, useState,  Dispatch, SetStateAction  } from 'react';
-import { CircularProgress } from '@mui/material';
-import MappingDisplay from './MappingDisplay';
+import { useEffect, useState,  Dispatch, SetStateAction  } from "react";
+import { CircularProgress } from "@mui/material";
+import MappingDisplay from "./MappingDisplay";
 import {
   getHubSpotProperties,
   getCompanyProperties,
@@ -9,8 +9,8 @@ import {
   Property,
   PropertyWithMapping,
   SupportedObjectTypes,
-} from '../utils';
-import { MappingHeader } from './MappingHeaders';
+} from "../utils";
+import { MappingHeader } from "./MappingHeaders";
 
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
@@ -25,17 +25,17 @@ function MappingContainer(props: {
   useEffect(() => {
     async function getNativePropertiesWithMappings(): Promise<void> {
       try {
-        const response = await fetch('/api/native-properties-with-mappings');
+        const response = await fetch("/api/native-properties-with-mappings");
         if (!response.ok) {
           throw new Error(`Failed to fetch data! Status: ${response.status}`);
         }
         //I believe TS is inferring that PropertyWithMapping[] is actually Promise<PropertyWithMapping[]>, may fix to be explicit later
         const nativePropertiesWithMappings = (await response.json()) as PropertyWithMapping[];
-        console.log('response on getNativeProperties', nativePropertiesWithMappings);
+        console.log("response on getNativeProperties", nativePropertiesWithMappings);
 
         setNativePropertiesWithMappings(nativePropertiesWithMappings);
       } catch (error) {
-        console.error('Error fetching native properties with mappings:', error);
+        console.error("Error fetching native properties with mappings:", error);
       }
     }
 
@@ -50,16 +50,16 @@ function MappingContainer(props: {
       switch (objectType) {
       case SupportedObjectTypes.contacts:
         setHubSpotProperties(
-          shapeProperties(getContactProperties(hubspotProperties), 'Contact')
+          shapeProperties(getContactProperties(hubspotProperties), "Contact")
         );
         break;
       case SupportedObjectTypes.companies:
         setHubSpotProperties(
-          shapeProperties(getCompanyProperties(hubspotProperties), 'Company')
+          shapeProperties(getCompanyProperties(hubspotProperties), "Company")
         );
         break;
       default:
-        console.log('unknown object type');
+        console.log("unknown object type");
       }
     }
 

@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography } from "@mui/material";
 
 export function MappingHeader():JSX.Element {
   return <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>

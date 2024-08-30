@@ -5,12 +5,12 @@ import {
   Typography,
   Paper,
   SelectChangeEvent,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import React, { useState, useEffect, useRef } from 'react';
-import { Property, Mapping, Direction, PropertyWithMapping } from '../utils';
-import { DirectionSelection } from './DirectionSelection';
-import { OptionDisplay } from './OptionDisplay';
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import React, { useState, useEffect, useRef } from "react";
+import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
+import { DirectionSelection } from "./DirectionSelection";
+import { OptionDisplay } from "./OptionDisplay";
 
 interface MappingDisplayProps {
   nativePropertyWithMapping: PropertyWithMapping;
@@ -18,11 +18,11 @@ interface MappingDisplayProps {
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(2),
   margin: theme.spacing(2),
-  textAlign: 'left',
+  textAlign: "left",
   color: theme.palette.text.secondary,
 }));
 
@@ -43,14 +43,14 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const [value, setValue] = useState<Property | null>(
     hubspotProperty.name ? hubspotProperty : null
   );
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>("");
   const [syncDirection, setSyncDirection] = useState<Direction>(
     direction || Direction.toHubSpot
   );
 
   function usePrevious(value: Mapping | null): Mapping | null | undefined {
     const ref = useRef<Mapping | null>();
-    console.log('useRef++', ref);
+    console.log("useRef++", ref);
     useEffect(() => {
       ref.current = value;
     }),
@@ -61,17 +61,17 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const previousMapping = usePrevious(mapping);
   async function deleteMapping(mappingId: number | undefined):Promise<void> {
     if (mappingId == undefined) {
-      console.error('Mapping ID is undefined');
+      console.error("Mapping ID is undefined");
     }
     //TODO fix this as part of deleteMappings Fix
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const response = await fetch(`/api/mappings/${mappingId}`, {
-      method: 'DELETE',
-      mode: 'cors',
+      method: "DELETE",
+      mode: "cors",
     });
     try {
       const parsedResponse = (await response.json()) as Mapping;
-      console.log('parsed response+=',parsedResponse);
+      console.log("parsed response+=",parsedResponse);
     } catch (error: any) {
       console.error(error);
     }
@@ -79,7 +79,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   useEffect(() => {
     async function saveMapping(): Promise<void | boolean> {
-      console.log('hubspot property in effect', value);
+      console.log("hubspot property in effect", value);
 
       if (!value?.name) {
         return false;
@@ -94,14 +94,14 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         direction: syncDirection,
       };
 
-      console.log('updatedMapping', updatedMapping);
+      console.log("updatedMapping", updatedMapping);
 
       try {
-        const response = await fetch('/api/mappings', {
-          method: 'POST',
+        const response = await fetch("/api/mappings", {
+          method: "POST",
           body: JSON.stringify(updatedMapping),
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
 
@@ -110,9 +110,9 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         }
 
         const data = (await response.json()) as Mapping;
-        console.log('data in saveMapping+=',data);
+        console.log("data in saveMapping+=",data);
       } catch (error) {
-        console.error('Error while saving mapping:', error);
+        console.error("Error while saving mapping:", error);
       }
     }
     saveMapping()
@@ -132,12 +132,12 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     console.log(event, value);
 
     if (value) {
-      console.log('value was truthy');
+      console.log("value was truthy");
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
       const previousValue = previousMapping;
-      console.log(previousValue, 'previousValue');
+      console.log(previousValue, "previousValue");
       await deleteMapping(previousMapping?.id);
       setValue(value);
     }
@@ -172,7 +172,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={name.endsWith('required') ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
         />
       </Grid>
     </Grid>

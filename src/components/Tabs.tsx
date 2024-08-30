@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Tabs,
   Tab,
-} from '@mui/material';
+} from "@mui/material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,18 +44,18 @@ function TabContainer(props: {
 
   interface A11yProps {
     id: string;
-    'aria-controls': string;
+    "aria-controls": string;
   }
 
   function a11yProps(index: number):A11yProps {
     return {
       id: `simple-tab-${index}`,
-      'aria-controls': `simple-tabpanel-${index}`,
+      "aria-controls": `simple-tabpanel-${index}`,
     };
   }
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={activeTab}
           onChange={handleChange}

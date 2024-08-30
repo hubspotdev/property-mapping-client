@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import './App.css';
+import "./App.css";
 
-import { Grid, Box, Snackbar, ThemeProvider } from '@mui/material';
+import { Grid, Box, Snackbar, ThemeProvider } from "@mui/material";
 
-import TabContainer from './components/Tabs';
-import Header from './components/Header';
+import TabContainer from "./components/Tabs";
+import Header from "./components/Header";
 
-import MappingContainer from './components/MappingContainer';
-import { theme } from './theme';
-import { SupportedObjectTypes } from './utils';
+import MappingContainer from "./components/MappingContainer";
+import { theme } from "./theme";
+import { SupportedObjectTypes } from "./utils";
 
 function App(): JSX.Element {
   const [displaySnackBar, setDisplaySnackBar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   return (
     <ThemeProvider theme={theme}>
@@ -29,9 +29,9 @@ function App(): JSX.Element {
               message={snackbarMessage}
               autoHideDuration={3000}
               onClose={() => setDisplaySnackBar(false)}
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              anchorOrigin={{ vertical: "top", horizontal: "center" }}
             />
-            <TabContainer objects={['Contact', 'Company']}>
+            <TabContainer objects={["Contact", "Company"]}>
               <MappingContainer
                 objectType={SupportedObjectTypes.contacts}
                 setDisplaySnackBar={setDisplaySnackBar}
