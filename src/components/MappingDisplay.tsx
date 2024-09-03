@@ -29,15 +29,17 @@ const Item = styled(Paper)(({ theme }) => ({
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object } = property;
+  const { name, label, type, object, archivable, readOnlyDefinition, readOnlyValue } = property;
   let { hubspotName } = mapping || {};
   const { direction, id, hubspotLabel } = mapping || {};
-
   const hubspotProperty: Property = {
     name: hubspotName,
     label: hubspotLabel,
     type,
     object,
+    archivable,
+    readOnlyDefinition,
+    readOnlyValue
   };
 
   const [value, setValue] = useState<Property | null>(
@@ -138,7 +140,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       setValue(value);
     }
   };
-  // console.log(hubspotProperty, "hubspotProperty");
+  // console.log(hubspotProperty, "hubspotProperty ==");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -168,7 +170,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={readOnlyValue} // Probably a better way to do this but naming convention works since the customer can't change that
         />
       </Grid>
     </Grid>

@@ -5,6 +5,9 @@ interface Property {
   label: string;
   type: string;
   object: string;
+  archivable: boolean;
+  readOnlyDefinition: boolean;
+  readOnlyValue: boolean;
 }
 
 interface PropertiesResponse {
@@ -21,6 +24,9 @@ interface Mapping {
   object: string;
   direction: Direction;
   customerId: string;
+  archivable: boolean;
+  readOnlyDefinition: boolean;
+  readOnlyValue: boolean;
 }
 
 interface PropertyWithMapping {
@@ -56,12 +62,16 @@ const getCompanyProperties = (hubspotProperties: PropertiesResponse):Property[] 
 
 //object is defined as type string but in Mapping it is defined as type object, so I switched Mapping.object to type string
 const shapeProperties = (properties: Property[], object: string): Property[] => {
+  console.log('properties in shapeProperties', properties)
   return properties.map((property) => {
     return {
       name: property.name,
       label: property.label,
       type: property.type,
       object: object,
+      archivable: property.archivable,
+      readOnlyDefinition: property.readOnlyDefinition,
+      readOnlyValue: property.readOnlyValue,
     };
   });
 };
