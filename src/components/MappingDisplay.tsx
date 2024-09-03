@@ -29,7 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object, archivable, readOnlyDefinition, readOnlyValue } = property;
+  const { name, label, type, object, archivable, readOnlyDefinition, readOnlyValue, modificationMetadata } = property;
   let { hubspotName } = mapping || {};
   const { direction, id, hubspotLabel } = mapping || {};
   const hubspotProperty: Property = {
@@ -39,7 +39,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     object,
     archivable,
     readOnlyDefinition,
-    readOnlyValue
+    readOnlyValue,
+    modificationMetadata
   };
 
   const [value, setValue] = useState<Property | null>(
@@ -92,6 +93,9 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         hubspotLabel: value?.label,
         object: object,
         direction: syncDirection,
+        archivable:value.archivable,
+        readOnlyDefinition:value.readOnlyDefinition,
+        readOnlyValue: value.readOnlyValue
       };
 
       console.log("updatedMapping", updatedMapping);
