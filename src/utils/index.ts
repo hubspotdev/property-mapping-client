@@ -70,9 +70,6 @@ const getCompanyProperties = (hubspotProperties: PropertiesResponse):Property[] 
 const shapeProperties = (properties: Property[], object: string): Property[] => {
   // console.log('properties in shapeProperties', properties)
   return properties.map((property) => {
-    console.log('property in shapeProperties', property)
-
-    console.log('property in shapeProperties', property.modificationMetadata)
     return {
       name: property.name,
       label: property.label,

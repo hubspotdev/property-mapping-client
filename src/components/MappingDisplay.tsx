@@ -29,9 +29,9 @@ const Item = styled(Paper)(({ theme }) => ({
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object, archivable, readOnlyDefinition, readOnlyValue, modificationMetadata } = property;
+  const { name, label, type, object, modificationMetadata } = property;
   let { hubspotName } = mapping || {};
-  const { direction, id, hubspotLabel } = mapping || {};
+  const { direction, id, hubspotLabel,  archivable, readOnlyDefinition, readOnlyValue, } = mapping || {};
   const hubspotProperty: Property = {
     name: hubspotName,
     label: hubspotLabel,
@@ -80,8 +80,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   useEffect(() => {
     async function saveMapping(): Promise<void | boolean> {
-      console.log("hubspot property in effect", value);
-
       if (!value?.name) {
         return false;
       }
@@ -98,8 +96,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         readOnlyValue: value.readOnlyValue
       };
 
-      console.log("updatedMapping", updatedMapping);
-
       try {
         const response = await fetch("/api/mappings", {
           method: "POST",
@@ -114,7 +110,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         }
 
         const data = (await response.json()) as Mapping;
-        console.log("data in saveMapping+=",data);
       } catch (error) {
         console.error("Error while saving mapping:", error);
       }
@@ -124,9 +119,18 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   }, [value, syncDirection]);
 
-  const handleDirectionChange = (event: SelectChangeEvent):void => {
-    console.log(event.target.value);
-    setSyncDirection(event.target.value as Direction);
+  const handleDirectionChange = (event: SelectChangeEvent): void => {
+    if (!mapping && !value) {
+      setSyncDirection(event.target.value as Direction);
+      return;
+    }
+
+    const { value: eventValue } = event.target;
+    if (value && value.readOnlyValue && eventValue !== Direction.toNative) {
+      console.warn('Cannot map to a read only property');
+      return;
+    }
+    setSyncDirection(eventValue as Direction);
   };
 
   const handleMappingChange = async (
@@ -159,7 +163,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         <Autocomplete
           className={`hubspot${object}Property`}
           options={hubspotProperties}
-          onChange={handleMappingChange}
+          getOptionDisabled={(option) => option.readOnlyValue && syncDirection !== Direction.toNative}
+          onChange={ handleMappingChange}
           renderInput={(params) => {
             return (
               <TextField {...params} label={`HubSpot ${object} Properties`} />
@@ -174,7 +179,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={readOnlyValue} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={property.readOnlyValue && syncDirection !== Direction.toHubSpot}
         />
       </Grid>
     </Grid>
