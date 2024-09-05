@@ -29,20 +29,17 @@ const Item = styled(Paper)(({ theme }) => ({
 function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object, modificationMetadata } = property;
+  const { name, label, type, object } = property;
   let { hubspotName } = mapping || {};
-  const { direction, id, hubspotLabel,  archivable, readOnlyDefinition, readOnlyValue, } = mapping || {};
+  const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
   const hubspotProperty: Property = {
     name: hubspotName,
     label: hubspotLabel,
     type,
     object,
-    archivable,
-    readOnlyDefinition,
-    readOnlyValue,
     modificationMetadata
   };
-
+console.log('mappingDisplay property and mapping', property, mapping)
   const [value, setValue] = useState<Property | null>(
     hubspotProperty.name ? hubspotProperty : null
   );
@@ -91,9 +88,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         hubspotLabel: value?.label,
         object: object,
         direction: syncDirection,
-        archivable:value.archivable,
-        readOnlyDefinition:value.readOnlyDefinition,
-        readOnlyValue: value.readOnlyValue
+        modificationMetadata: value.modificationMetadata
       };
 
       try {
@@ -126,7 +121,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     }
 
     const { value: eventValue } = event.target;
-    if (value && value.readOnlyValue && eventValue !== Direction.toNative) {
+    if (value && value.modificationMetadata.readOnlyValue && eventValue !== Direction.toNative) {
       console.warn('Cannot map to a read only property');
       return;
     }
@@ -148,7 +143,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       setValue(value);
     }
   };
-  // console.log(hubspotProperty, "hubspotProperty ==");
+  console.log(hubspotProperties, "hubspotProperty ==");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -163,7 +158,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         <Autocomplete
           className={`hubspot${object}Property`}
           options={hubspotProperties}
-          getOptionDisabled={(option) => option.readOnlyValue && syncDirection !== Direction.toNative}
+          getOptionDisabled={(option) => option.modificationMetadata.readOnlyValue && syncDirection !== Direction.toNative}
           onChange={ handleMappingChange}
           renderInput={(params) => {
             return (
@@ -179,7 +174,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={property.readOnlyValue && syncDirection !== Direction.toHubSpot}
+          disabled={property.modificationMetadata.readOnlyValue && syncDirection !== Direction.toHubSpot}
         />
       </Grid>
     </Grid>
