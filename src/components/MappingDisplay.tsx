@@ -39,7 +39,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     object,
     modificationMetadata
   };
-console.log('mappingDisplay property and mapping', property, mapping)
   const [value, setValue] = useState<Property | null>(
     hubspotProperty.name ? hubspotProperty : null
   );
@@ -62,14 +61,15 @@ console.log('mappingDisplay property and mapping', property, mapping)
     if (mappingId == undefined) {
       console.error("Mapping ID is undefined");
     }
+    try {
     //TODO fix this as part of deleteMappings Fix
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",
     });
-    try {
+
       const parsedResponse = (await response.json()) as Mapping;
-      console.log("parsed response+=",parsedResponse);
+      console.log('Deleted mapping', parsedResponse)
     } catch (error: any) {
       console.error(error);
     }
@@ -105,6 +105,7 @@ console.log('mappingDisplay property and mapping', property, mapping)
         }
 
         const data = (await response.json()) as Mapping;
+        console.log('Saved mapping', data)
       } catch (error) {
         console.error("Error while saving mapping:", error);
       }
@@ -133,17 +134,13 @@ console.log('mappingDisplay property and mapping', property, mapping)
     value: Property | null
   ): Promise<void> => {
     if (value) {
-      console.log("value was truthy");
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
-      const previousValue = previousMapping;
-      console.log(previousValue, "previousValue");
       await deleteMapping(previousMapping?.id);
       setValue(value);
     }
   };
-  console.log(hubspotProperties, "hubspotProperty ==");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>

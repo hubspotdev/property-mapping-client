@@ -47,13 +47,11 @@ function MappingContainer(props: {
       const hubspotProperties = await getHubSpotProperties();
       switch (objectType) {
       case SupportedObjectTypes.contacts:
-        console.log('setting hubspot contact properties')
         setHubSpotProperties(
           shapeProperties(getContactProperties(hubspotProperties), "Contact")
         );
         break;
       case SupportedObjectTypes.companies:
-        console.log('setting hubspot company properties', shapeProperties(getCompanyProperties(hubspotProperties), "Company"))
         setHubSpotProperties(
           shapeProperties(getCompanyProperties(hubspotProperties), "Company")
         );
@@ -67,7 +65,6 @@ function MappingContainer(props: {
       .catch(err => console.error(err));
 
   }, []);
-  console.log('nativepropertywithmappings',nativePropertiesWithMappings);
   const filterPropertiesByObjectType = (
     nativePropertiesWithMappings: PropertyWithMapping[]
   ):PropertyWithMapping[] => {
@@ -77,9 +74,6 @@ function MappingContainer(props: {
       }
     );
   };
-  if(nativePropertiesWithMappings){
-    console.log('filterPropertiesByObjectType',filterPropertiesByObjectType(nativePropertiesWithMappings));
-  }
 
   return !nativePropertiesWithMappings ? (
     <CircularProgress />
