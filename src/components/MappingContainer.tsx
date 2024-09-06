@@ -29,9 +29,7 @@ function MappingContainer(props: {
         if (!response.ok) {
           throw new Error(`Failed to fetch data! Status: ${response.status}`);
         }
-        //I believe TS is inferring that PropertyWithMapping[] is actually Promise<PropertyWithMapping[]>, may fix to be explicit later
         const nativePropertiesWithMappings = (await response.json()) as PropertyWithMapping[];
-        console.log("response on getNativeProperties", nativePropertiesWithMappings);
 
         setNativePropertiesWithMappings(nativePropertiesWithMappings);
       } catch (error) {
@@ -67,7 +65,6 @@ function MappingContainer(props: {
       .catch(err => console.error(err));
 
   }, []);
-  // console.log(nativePropertiesWithMappings);
   const filterPropertiesByObjectType = (
     nativePropertiesWithMappings: PropertyWithMapping[]
   ):PropertyWithMapping[] => {

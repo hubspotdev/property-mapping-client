@@ -31,15 +31,14 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const { property, mapping } = nativePropertyWithMapping;
   const { name, label, type, object } = property;
   let { hubspotName } = mapping || {};
-  const { direction, id, hubspotLabel } = mapping || {};
-
+  const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
   const hubspotProperty: Property = {
     name: hubspotName,
     label: hubspotLabel,
     type,
     object,
+    modificationMetadata
   };
-
   const [value, setValue] = useState<Property | null>(
     hubspotProperty.name ? hubspotProperty : null
   );
@@ -62,14 +61,15 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     if (mappingId == undefined) {
       console.error("Mapping ID is undefined");
     }
+    try {
     //TODO fix this as part of deleteMappings Fix
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",
     });
-    try {
+
       const parsedResponse = (await response.json()) as Mapping;
-      console.log("parsed response+=",parsedResponse);
+      console.log('Deleted mapping', parsedResponse)
     } catch (error: any) {
       console.error(error);
     }
@@ -77,8 +77,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   useEffect(() => {
     async function saveMapping(): Promise<void | boolean> {
-      console.log("hubspot property in effect", value);
-
       if (!value?.name) {
         return false;
       }
@@ -90,9 +88,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         hubspotLabel: value?.label,
         object: object,
         direction: syncDirection,
+        modificationMetadata: value.modificationMetadata
       };
-
-      console.log("updatedMapping", updatedMapping);
 
       try {
         const response = await fetch("/api/mappings", {
@@ -108,7 +105,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         }
 
         const data = (await response.json()) as Mapping;
-        console.log("data in saveMapping+=",data);
+        console.log('Saved mapping', data)
       } catch (error) {
         console.error("Error while saving mapping:", error);
       }
@@ -118,9 +115,18 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
   }, [value, syncDirection]);
 
-  const handleDirectionChange = (event: SelectChangeEvent):void => {
-    console.log(event.target.value);
-    setSyncDirection(event.target.value as Direction);
+  const handleDirectionChange = (event: SelectChangeEvent): void => {
+    if (!mapping && !value) {
+      setSyncDirection(event.target.value as Direction);
+      return;
+    }
+
+    const { value: eventValue } = event.target;
+    if (value && value.modificationMetadata.readOnlyValue && eventValue !== Direction.toNative) {
+      console.warn('Cannot map to a read only property');
+      return;
+    }
+    setSyncDirection(eventValue as Direction);
   };
 
   const handleMappingChange = async (
@@ -128,17 +134,13 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     value: Property | null
   ): Promise<void> => {
     if (value) {
-      console.log("value was truthy");
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
-      const previousValue = previousMapping;
-      console.log(previousValue, "previousValue");
       await deleteMapping(previousMapping?.id);
       setValue(value);
     }
   };
-  // console.log(hubspotProperty, "hubspotProperty");
   return (
     <Grid container item spacing={6} rowSpacing={12} columnSpacing={12}>
       <Grid item xs={4}>
@@ -153,7 +155,8 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         <Autocomplete
           className={`hubspot${object}Property`}
           options={hubspotProperties}
-          onChange={handleMappingChange}
+          getOptionDisabled={(option) => option.modificationMetadata.readOnlyValue && syncDirection !== Direction.toNative}
+          onChange={ handleMappingChange}
           renderInput={(params) => {
             return (
               <TextField {...params} label={`HubSpot ${object} Properties`} />
@@ -168,7 +171,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
           isOptionEqualToValue={(option, value) => {
             return option.name === value.name;
           }}
-          disabled={name.endsWith("required") ? true : false} // Probably a better way to do this but naming convention works since the customer can't change that
+          disabled={property.modificationMetadata.readOnlyValue && syncDirection !== Direction.toHubSpot}
         />
       </Grid>
     </Grid>

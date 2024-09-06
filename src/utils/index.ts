@@ -5,8 +5,14 @@ interface Property {
   label: string;
   type: string;
   object: string;
+  modificationMetadata: ModificationMetadata;
 }
 
+interface ModificationMetadata {
+  archivable: boolean;
+  readOnlyDefinition: boolean;
+  readOnlyValue:boolean;
+}
 interface PropertiesResponse {
   contactProperties: any;
   companyProperties: any;
@@ -14,13 +20,13 @@ interface PropertiesResponse {
 
 interface Mapping {
   nativeName: string;
-  //testing hubspotLabel value type
   hubspotLabel: string;
   hubspotName: string;
   id: number;
   object: string;
   direction: Direction;
   customerId: string;
+  modificationMetadata:ModificationMetadata
 }
 
 interface PropertyWithMapping {
@@ -62,6 +68,7 @@ const shapeProperties = (properties: Property[], object: string): Property[] => 
       label: property.label,
       type: property.type,
       object: object,
+      modificationMetadata:property.modificationMetadata
     };
   });
 };
