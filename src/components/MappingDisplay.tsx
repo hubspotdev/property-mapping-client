@@ -7,7 +7,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
 import { DirectionSelection } from "./DirectionSelection";
 import { OptionDisplay } from "./OptionDisplay";
@@ -46,17 +46,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
   const [syncDirection, setSyncDirection] = useState<Direction>(
     direction || Direction.toHubSpot
   );
-
-  function usePrevious(value: Mapping | null): Mapping | null | undefined {
-    const ref = useRef<Mapping | null>();
-    useEffect(() => {
-      ref.current = value;
-    }),
-    [value];
-    return ref.current;
-  }
-
-  const previousMapping = usePrevious(mapping);
+  const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping);
   async function deleteMapping(mappingId: number | undefined):Promise<void> {
     if (mappingId == undefined) {
       console.error("Mapping ID is undefined");
@@ -80,7 +70,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       if (!value?.name) {
         return false;
       }
-
       const updatedMapping = {
         id: id,
         nativeName: name,
@@ -106,6 +95,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
 
         const data = (await response.json()) as Mapping;
         console.log('Saved mapping', data)
+        setLatestMapping(data)
       } catch (error) {
         console.error("Error while saving mapping:", error);
       }
@@ -137,7 +127,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       hubspotName ? (hubspotName = value.name) : null;
       setValue(value);
     } else {
-      await deleteMapping(previousMapping?.id);
+      await deleteMapping(latestMapping?.id);
       setValue(value);
     }
   };
