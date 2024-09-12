@@ -39,9 +39,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
     label: mapping.hubspotLabel,
     type,
     object,
-  }:null
-
- ;
+  }:null;
 
   const [value, setValue] = useState<Property | null>(
     hubspotProperty?.name ? hubspotProperty : null
