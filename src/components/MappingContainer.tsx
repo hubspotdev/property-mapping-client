@@ -1,6 +1,9 @@
 import { useEffect, useState,  Dispatch, SetStateAction  } from "react";
 import { CircularProgress } from "@mui/material";
 import MappingDisplay from "./MappingDisplay";
+
+import PropertyEditor from './PropertyEditor';
+
 import {
   getHubSpotProperties,
   getCompanyProperties,
@@ -10,17 +13,29 @@ import {
   PropertyWithMapping,
   SupportedObjectTypes,
 } from "../utils";
-import { MappingHeader } from "./MappingHeaders";
+
+
+import { Button, CircularProgress, Drawer, Grid } from "@mui/material";
+import { MappingHeader } from './MappingHeaders';
 
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
-  setDisplaySnackBar: Dispatch<SetStateAction<boolean>>;
-  setSnackbarMessage: Dispatch<SetStateAction<string>>;
+  setDisplaySnackBar: Function;
+  setSnackbarMessage: Function;
 }):JSX.Element {
-  const {objectType} = props;
+  const { objectType} = props;
+
+
+
+  const [shouldShowPropertyEditor, setShouldShowPropertyEditor] = useState(false)
+
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
   const [nativePropertiesWithMappings, setNativePropertiesWithMappings] =
     useState<PropertyWithMapping[]>();
+
+  const onNewPropertyClick = () =>{
+    setShouldShowPropertyEditor(!shouldShowPropertyEditor)
+  }
 
   useEffect(() => {
     async function getNativePropertiesWithMappings(): Promise<void> {
@@ -91,7 +106,10 @@ function MappingContainer(props: {
           );
         }
       )}
+      <Button onClick={onNewPropertyClick} variant='contained'> {shouldShowPropertyEditor ? "Add Property" : "Cancel"}</Button>
+      <Drawer PaperProps={{elevation:3}} anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}>    <Grid container spacing={12} columns={12}> <Grid item ><PropertyEditor onNewPropertyCreate={setShouldShowPropertyEditor} setNativePropertiesWithMappings={setNativePropertiesWithMappings} nativePropertiesWithMappings={nativePropertiesWithMappings} /></Grid> </Grid></Drawer>
     </>
+
   );
 }
 

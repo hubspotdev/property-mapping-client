@@ -26,10 +26,11 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function MappingDisplay(props: MappingDisplayProps): JSX.Element {
+function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
   const { name, label, type, object } = property;
+
   let { hubspotName } = mapping || {};
   const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
   const hubspotProperty: Property = {
@@ -39,15 +40,18 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     object,
     modificationMetadata
   };
+
   const [value, setValue] = useState<Property | null>(
-    hubspotProperty.name ? hubspotProperty : null
+    hubspotProperty?.name ? hubspotProperty : null
   );
   const [inputValue, setInputValue] = useState<string>("");
   const [syncDirection, setSyncDirection] = useState<Direction>(
-    direction || Direction.toHubSpot
+    mapping?.direction || Direction.toHubSpot
   );
+
   const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping);
   async function deleteMapping(mappingId: number | undefined):Promise<void> {
+
     if (mappingId == undefined) {
       console.error("Mapping ID is undefined");
     }
@@ -71,7 +75,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         return false;
       }
       const updatedMapping = {
-        id: id,
+        id: mapping?.id,
         nativeName: name,
         hubspotName: value?.name,
         hubspotLabel: value?.label,
@@ -124,7 +128,9 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
     value: Property | null
   ): Promise<void> => {
     if (value) {
+
       hubspotName ? (hubspotName = value.name) : null;
+
       setValue(value);
     } else {
       await deleteMapping(latestMapping?.id);
@@ -139,6 +145,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
         </Item>
       </Grid>
       <Grid item xs={2}>
+
         {DirectionSelection(label, handleDirectionChange, syncDirection)}
       </Grid>
       <Grid item xs={4}>
