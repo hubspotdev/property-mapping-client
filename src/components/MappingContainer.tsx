@@ -88,7 +88,7 @@ function MappingContainer(props: {
           );
         }
       )}
-      <Button onClick={onNewPropertyClick} variant='contained'> Add Property</Button>
+      <Button onClick={onNewPropertyClick} variant='contained'> {shouldShowPropertyEditor ? "Add Property" : "Cancel"}</Button>
       <Drawer PaperProps={{elevation:3}} anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}>    <Grid container spacing={12} columns={12}> <Grid item ><PropertyEditor onNewPropertyCreate={setShouldShowPropertyEditor} setNativePropertiesWithMappings={setNativePropertiesWithMappings} nativePropertiesWithMappings={nativePropertiesWithMappings} /></Grid> </Grid></Drawer>
     </>
 
