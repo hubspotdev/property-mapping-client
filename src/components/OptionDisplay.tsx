@@ -1,11 +1,11 @@
-import { AutocompleteRenderOptionState } from "@mui/material";
+// import { AutocompleteRenderOptionState } from '@mui/material';
 import { HTMLAttributes } from "react";
 import { Property } from "../utils";
 
 export const OptionDisplay = (
   props: HTMLAttributes<HTMLLIElement>,
   option: Property,
-  state: AutocompleteRenderOptionState
+  // state: AutocompleteRenderOptionState
 ): JSX.Element => {
   return (
     <li {...props} key={option.name}>
