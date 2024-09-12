@@ -12,6 +12,7 @@ import {
 } from "../utils";
 
 import { Button, CircularProgress, Drawer, Grid } from "@mui/material";
+import { MappingHeader } from './MappingHeaders';
 
 function MappingContainer(props: {
   objectType: SupportedObjectTypes
