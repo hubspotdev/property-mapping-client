@@ -52,7 +52,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       console.error("Mapping ID is undefined");
     }
     try {
-    //TODO fix this as part of deleteMappings Fix
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",
