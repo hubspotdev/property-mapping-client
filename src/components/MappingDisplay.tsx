@@ -115,6 +115,10 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element {
       console.warn('Cannot map to a read only property');
       return;
     }
+    if (property.modificationMetadata.readOnlyValue && eventValue !== Direction.toHubSpot) {
+      console.warn('Cannot map to a read only property');
+      return;
+    }
     setSyncDirection(eventValue as Direction);
   };
 
