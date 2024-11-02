@@ -62,6 +62,11 @@ enum SupportedObjectTypes {
 
 const getHubSpotProperties = async (): Promise<PropertiesResponse> => {
   const response = await fetch("/api/hubspot-properties");
+  console.log(response.headers.get('content-type'))
+  if(response.headers.get('content-type')?.includes('text/html')){
+    window.location.href = await response.text()
+
+  } //redirect
   const properties = (await response.json()) as PropertiesResponse;
   return properties;
 };

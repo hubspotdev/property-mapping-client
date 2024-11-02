@@ -29,36 +29,53 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const validateProperty = (maybeProperty:MaybeProperty) =>{
   if(!maybeProperty.label){
-    throw new Error("Missing the required attirubte 'label'")
+    console.error("Missing label for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'label'")
   }
   if(!maybeProperty.name){
-    throw new Error("Missing the required attirubte 'name'")
+    console.error("Missing name for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'name'")
   }
   if(!maybeProperty.modificationMetadata){
-    throw new Error("Missing the required attirubte 'modificationMetaData'")
+    console.error("Missing modificationMetaData for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'modificationMetaData'")
   }
   return maybeProperty as Property
 
 }
 
+const mappingToMappedProperty = (mapping:Mapping | undefined) => {
+  if(!mapping){
+    return null
+  }
+  const mappedProperty:Property = {
+    name:mapping.hubspotName,
+    label:mapping.hubspotLabel,
+    object:mapping.object,
+    type:"type", // TODO go back and make sure type field gets added to the Mapping that gets sent
+    modificationMetadata:mapping.modificationMetadata
+  }
+  return mappedProperty
+}
+
 function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object } = property;
+  const { name, label, type, object,modificationMetadata } = property;
 
   let { hubspotName } = mapping || {};
-  const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
+  const { direction, id, hubspotLabel } = mapping || {};
   const maybeProperty: MaybeProperty = {
-    name: hubspotName,
-    label: hubspotLabel,
+    name,
+    label,
     type,
     object,
     modificationMetadata
   };
-  const hubspotProperty = validateProperty(maybeProperty)
-
+  const nativeProperty = validateProperty(maybeProperty)
+  const mappedProperty = mappingToMappedProperty(mapping)
   const [value, setValue] = useState<Property | null>(
-    hubspotProperty?.name ? hubspotProperty : null
+    mapping?.hubspotName ? mappedProperty : null
   );
   const [inputValue, setInputValue] = useState<string>("");
   const [syncDirection, setSyncDirection] = useState<Direction>(
