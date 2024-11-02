@@ -1,5 +1,4 @@
 import { useEffect, useState,  Dispatch, SetStateAction  } from "react";
-import { CircularProgress } from "@mui/material";
 import MappingDisplay from "./MappingDisplay";
 
 import PropertyEditor from './PropertyEditor';

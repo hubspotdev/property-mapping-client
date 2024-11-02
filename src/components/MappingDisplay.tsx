@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
-import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
+import { Property, Mapping, Direction, PropertyWithMapping, MaybeProperty } from "../utils";
 import { DirectionSelection } from "./DirectionSelection";
 import { OptionDisplay } from "./OptionDisplay";
 
@@ -16,6 +16,7 @@ interface MappingDisplayProps {
   nativePropertyWithMapping: PropertyWithMapping;
   hubspotProperties: Property[];
 }
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,6 +27,20 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const validateProperty = (maybeProperty:MaybeProperty) =>{
+  if(!maybeProperty.label){
+    throw new Error("Missing the required attirubte 'label'")
+  }
+  if(!maybeProperty.name){
+    throw new Error("Missing the required attirubte 'name'")
+  }
+  if(!maybeProperty.modificationMetadata){
+    throw new Error("Missing the required attirubte 'modificationMetaData'")
+  }
+  return maybeProperty as Property
+
+}
+
 function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
@@ -33,13 +48,14 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
 
   let { hubspotName } = mapping || {};
   const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
-  const hubspotProperty: Property = {
+  const maybeProperty: MaybeProperty = {
     name: hubspotName,
     label: hubspotLabel,
     type,
     object,
     modificationMetadata
   };
+  const hubspotProperty = validateProperty(maybeProperty)
 
   const [value, setValue] = useState<Property | null>(
     hubspotProperty?.name ? hubspotProperty : null
@@ -49,7 +65,7 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
     mapping?.direction || Direction.toHubSpot
   );
 
-  const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping);
+  const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping?mapping : null);
   async function deleteMapping(mappingId: number | undefined):Promise<void> {
 
     if (mappingId == undefined) {

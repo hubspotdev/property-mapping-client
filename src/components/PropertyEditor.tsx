@@ -67,7 +67,7 @@ const createNewProperty = async (body:any) =>{
     const createNewPropertyResponse = await createNewProperty(propertyInfo)
     if(createNewPropertyResponse.status == 200){
       const newPropertyWithMapping:PropertyWithMapping = {
-        property:{name:propertyName, label:propertyLabel, type:propertyType, object:objectType, unique:enforcesUniquness},
+        property:{name:propertyName, label:propertyLabel, type:propertyType, object:objectType, unique:enforcesUniquness, modificationMetadata:{archivable:true, readOnlyDefinition:false, readOnlyValue:false}},//hardcoding modification metadata, will consider making it editible in the future
 
       }
       setNativePropertiesWithMappings([...nativePropertiesWithMappings,newPropertyWithMapping])

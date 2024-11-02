@@ -12,6 +12,18 @@ interface Property {
 
 }
 
+interface MaybeProperty {
+  name?: string;
+  label?: string;
+  type?: string;
+  object?: string;
+
+  unique?: boolean;
+
+  modificationMetadata?: ModificationMetadata;
+}
+
+
 interface ModificationMetadata {
   archivable: boolean;
   readOnlyDefinition: boolean;
@@ -117,4 +129,4 @@ export {
   Direction,
   SupportedObjectTypes
 };
-export type { Mapping, Property, PropertyWithMapping };
+export type { Mapping, Property, PropertyWithMapping, MaybeProperty };
