@@ -89,7 +89,6 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
       console.error("Mapping ID is undefined");
     }
     try {
-    //TODO fix this as part of deleteMappings Fix
     const response = await fetch(`/api/mappings/${mappingId}`, {
       method: "DELETE",
       mode: "cors",
@@ -150,6 +149,10 @@ function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
 
     const { value: eventValue } = event.target;
     if (value && value.modificationMetadata.readOnlyValue && eventValue !== Direction.toNative) {
+      console.warn('Cannot map to a read only property');
+      return;
+    }
+    if (property.modificationMetadata.readOnlyValue && eventValue !== Direction.toHubSpot) {
       console.warn('Cannot map to a read only property');
       return;
     }
