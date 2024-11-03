@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
-import { Property, Mapping, Direction, PropertyWithMapping } from "../utils";
+import { Property, Mapping, Direction, PropertyWithMapping, MaybeProperty } from "../utils";
 import { DirectionSelection } from "./DirectionSelection";
 import { OptionDisplay } from "./OptionDisplay";
 
@@ -16,6 +16,7 @@ interface MappingDisplayProps {
   nativePropertyWithMapping: PropertyWithMapping;
   hubspotProperties: Property[];
 }
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,30 +27,62 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const validateProperty = (maybeProperty:MaybeProperty) =>{
+  if(!maybeProperty.label){
+    console.error("Missing label for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'label'")
+  }
+  if(!maybeProperty.name){
+    console.error("Missing name for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'name'")
+  }
+  if(!maybeProperty.modificationMetadata){
+    console.error("Missing modificationMetaData for property", JSON.stringify(maybeProperty,null, 4))
+    //throw new Error("Missing the required attirubte 'modificationMetaData'")
+  }
+  return maybeProperty as Property
+
+}
+
+const mappingToMappedProperty = (mapping:Mapping | undefined) => {
+  if(!mapping){
+    return null
+  }
+  const mappedProperty:Property = {
+    name:mapping.hubspotName,
+    label:mapping.hubspotLabel,
+    object:mapping.object,
+    type:"type", // TODO go back and make sure type field gets added to the Mapping that gets sent
+    modificationMetadata:mapping.modificationMetadata
+  }
+  return mappedProperty
+}
+
 function MappingDisplay(props: MappingDisplayProps): JSX.Element |null {
   const { nativePropertyWithMapping, hubspotProperties } = props;
   const { property, mapping } = nativePropertyWithMapping;
-  const { name, label, type, object } = property;
+  const { name, label, type, object,modificationMetadata } = property;
 
   let { hubspotName } = mapping || {};
-  const { direction, id, hubspotLabel, modificationMetadata } = mapping || {};
-  const hubspotProperty: Property = {
-    name: hubspotName,
-    label: hubspotLabel,
+  const { direction, id, hubspotLabel } = mapping || {};
+  const maybeProperty: MaybeProperty = {
+    name,
+    label,
     type,
     object,
     modificationMetadata
   };
-
+  const nativeProperty = validateProperty(maybeProperty)
+  const mappedProperty = mappingToMappedProperty(mapping)
   const [value, setValue] = useState<Property | null>(
-    hubspotProperty?.name ? hubspotProperty : null
+    mapping?.hubspotName ? mappedProperty : null
   );
   const [inputValue, setInputValue] = useState<string>("");
   const [syncDirection, setSyncDirection] = useState<Direction>(
     mapping?.direction || Direction.toHubSpot
   );
 
-  const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping);
+  const [latestMapping, setLatestMapping] = useState<Mapping | null>(mapping?mapping : null);
   async function deleteMapping(mappingId: number | undefined):Promise<void> {
 
     if (mappingId == undefined) {

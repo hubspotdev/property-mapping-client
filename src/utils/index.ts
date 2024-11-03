@@ -12,6 +12,18 @@ interface Property {
 
 }
 
+interface MaybeProperty {
+  name?: string;
+  label?: string;
+  type?: string;
+  object?: string;
+
+  unique?: boolean;
+
+  modificationMetadata?: ModificationMetadata;
+}
+
+
 interface ModificationMetadata {
   archivable: boolean;
   readOnlyDefinition: boolean;
@@ -50,6 +62,11 @@ enum SupportedObjectTypes {
 
 const getHubSpotProperties = async (): Promise<PropertiesResponse> => {
   const response = await fetch("/api/hubspot-properties");
+  console.log(response.headers.get('content-type'))
+  if(response.headers.get('content-type')?.includes('text/html')){
+    window.location.href = await response.text()
+
+  } //redirect
   const properties = (await response.json()) as PropertiesResponse;
   return properties;
 };
@@ -117,4 +134,4 @@ export {
   Direction,
   SupportedObjectTypes
 };
-export type { Mapping, Property, PropertyWithMapping };
+export type { Mapping, Property, PropertyWithMapping, MaybeProperty };

@@ -1,5 +1,4 @@
 import { useEffect, useState,  Dispatch, SetStateAction  } from "react";
-import { CircularProgress } from "@mui/material";
 import MappingDisplay from "./MappingDisplay";
 
 import PropertyEditor from './PropertyEditor';
@@ -45,7 +44,8 @@ function MappingContainer(props: {
           throw new Error(`Failed to fetch data! Status: ${response.status}`);
         }
         const nativePropertiesWithMappings = (await response.json()) as PropertyWithMapping[];
-
+        console.log('About to update nativePropertiesWithMappings to')
+        console.log(nativePropertiesWithMappings)
         setNativePropertiesWithMappings(nativePropertiesWithMappings);
       } catch (error) {
         console.error("Error fetching native properties with mappings:", error);
@@ -60,6 +60,8 @@ function MappingContainer(props: {
   useEffect(() => {
     async function checkHubspotProperties():Promise<void> {
       const hubspotProperties = await getHubSpotProperties();
+      console.log('hubspotProperties')
+      console.log(hubspotProperties)
       switch (objectType) {
       case SupportedObjectTypes.contacts:
         setHubSpotProperties(
