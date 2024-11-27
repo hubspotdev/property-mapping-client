@@ -1,22 +1,42 @@
-# Created with Create React App
+# Property Mappings Client
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What this project does:
 
-## Getting started
+This project is a React-based web application designed to handle and map company and contact properties. It works together with a server built using Express.js, please refer to the [Express.js application repository](https://github.com/hubspotdev/property-mapping-server).
 
-In the project directory, you can run:
+## Why is this project useful:
+This project simplifies the process of property mapping for companies and contacts.
 
-###
+## How it works:
+The application features several React components that facilitate data management and synchronization between the frontend and backend systems, key components include:
 
-Start [server](https://git.hubteam.com/zwolfson/property-mappings-server) first. Technically it works either way, I just find it to be smoother this way
+**1. MappingDisplay Component**:
 
-### `npm start`
+**Saving a Mapping (POST request)**: Utilizes the saveMapping function to send new or updated mapping data to the server. It automatically constructs and sends this data whenever there are changes to the selected property or sync direction, ensuring updates are persistent.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+**Deleting a Mapping (DELETE request)**: The deleteMapping function is responsible for removing mappings by sending a DELETE request targeting specific IDs. This is triggered when mappings are manually cleared, enabling dynamic data management.
+
+
+**2. DirectionSelection Component**:
+
+This component provides a user-friendly control for selecting data synchronization directions between systems, allowing users to choose between toHubSpot, toNative, and biDirectional directions.
+
+**3. PropertyEditor Component**:
+
+Facilitates the creation of new properties with specific attributes like label, type, and uniqueness.
+
+## Getting started with the project:
+
+
+1. **Start the server first.** Although the application can technically run without this initial step, starting the [server](https://github.com/hubspotdev/property-mapping-server) beforehand ensures a smoother and more seamless setup.
+
+2. In the project directory, follow these steps:
+- Clone the repository
+- Install the dependencies
+- Start the application:
+   ``npm start``
+- Open [http://localhost:3000](http://localhost:3000) to view the app in your browser. The page will reload if you make edits, and you will also see any lint errors in the console.
 
 ## What's included
 
