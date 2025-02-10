@@ -93,7 +93,7 @@ function MappingContainer(props: {
   };
 
   return !nativePropertiesWithMappings ? (
-    <CircularProgress />
+    <CircularProgress data-testid="loading-spinner" />
   ) : (
     <>
       <MappingHeader/>

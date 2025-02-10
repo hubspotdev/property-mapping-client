@@ -1,4 +1,3 @@
-
 import { AppBar, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Box, Select, SelectChangeEvent, TextField, ToggleButton, Typography, Menu , Checkbox, Button, Alert, Collapse} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {Property, PropertyWithMapping, SupportedObjectTypes} from '../utils'
@@ -79,70 +78,70 @@ const createNewProperty = async (body:any) =>{
 
   return(
     <>
-  <Grid item xs={12} spacing={2} >
-    <AppBar position='static' sx={{padding:2}}><Typography variant='h4'> Create New Property </Typography> </AppBar>
-    </Grid>
-    <Grid item xs={12} >
-      <Grid item xs={12}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <AppBar position='static' sx={{padding:2}}><Typography variant='h4'> Create New Property </Typography> </AppBar>
+        </Grid>
+        <Grid item xs={12}>
+          <Grid item xs={12}>
+            <FormField>
+              <TextField id="property-label" label="Label" variant="standard" onChange={onLabelChange} value={propertyLabel} />
+            </FormField>
+          </Grid>
+          <Grid item xs={12}>
+            <FormField>
+              <TextField id="property-name" label="Name" variant="standard" disabled value={propertyName}/>
+            </FormField>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <FormField>
+            <FormControl fullWidth>
+              <InputLabel id="property-type">Property Type</InputLabel>
+              <Select
+                labelId="property-type"
+                id="property-type-select"
+                value={propertyType}
+                label="Type"
+                onChange={onPropertyTypeChange}
+              >
+                <MenuItem value={"string"}>String</MenuItem>
+                <MenuItem value={"number"}>Number</MenuItem>
+                <MenuItem value={"option"}>Option</MenuItem>
+              </Select>
+            </FormControl>
+          </FormField>
+        </Grid>
+        <Grid item>
+          <FormField>
+            <FormControl fullWidth>
+              <InputLabel id="ojbect-type">Object Type</InputLabel>
+              <Select
+                labelId="object-type"
+                id="object-type-select"
+                value={objectType}
+                label="Type"
+                onChange={onObjectTypeChange}
+              >
+                {objectTypeArray.map((objectType ) => {return  <MenuItem key={objectType} value={objectType}> {capitalizeFirstLetter(objectType)}</MenuItem>})}
+              </Select>
+            </FormControl>
+          </FormField>
+        </Grid>
         <FormField>
-    <TextField id="property-label" label="Label" variant="standard" onChange={onLabelChange} value={propertyLabel} />
-    </FormField>
-    </Grid>
-    <Grid item xs={12}>
-      <FormField>
-    <TextField id="property-name" label="Name" variant="standard" disabled value={propertyName}/>
-    </FormField>
-    </Grid>
-    </Grid>
-    <Grid item>
-    <FormField>
-    <FormControl fullWidth>
-  <InputLabel id="property-type">Property Type</InputLabel>
-  <Select
-    labelId="property-type"
-    id="property-type-select"
-    value={propertyType}
-    label="Type"
-    onChange={onPropertyTypeChange}
-  >
-    <MenuItem value={"string"}>String</MenuItem>
-    <MenuItem value={"number"}>Number</MenuItem>
-    <MenuItem value={"option"}>Option</MenuItem>
-  </Select>
-</FormControl>
-</FormField>
-</Grid>
-<Grid item>
-    <FormField>
-    <FormControl fullWidth>
-  <InputLabel id="ojbect-type">Object Type</InputLabel>
-  <Select
-    labelId="object-type"
-    id="object-type-select"
-    value={objectType}
-    label="Type"
-    onChange={onObjectTypeChange}
-  >
- {objectTypeArray.map((objectType ) => {return  <MenuItem value={objectType}> {capitalizeFirstLetter(objectType)}</MenuItem>})}
-  </Select>
-</FormControl>
-</FormField>
-</Grid>
-<FormField>
-<FormGroup>
-  <FormControlLabel control={<Checkbox checked={enforcesUniquness} onChange={onUniqunessChange}/> } label="Enforce Uniquness"/>
-</FormGroup>
-</FormField>
-<Grid item spacing={2}>
-<Button variant='contained' onClick={handleNewPropertyCreateRequest}> Submit</Button>
-</Grid>
-<Collapse in={hasErrors}>
-<Alert severity="error" >We are missing information needed to create the property</Alert>
-</Collapse>
-</>
-
+          <FormGroup>
+            <FormControlLabel control={<Checkbox checked={enforcesUniquness} onChange={onUniqunessChange}/> } label="Enforce Uniquness"/>
+          </FormGroup>
+        </FormField>
+        <Grid item>
+          <Button variant='contained' onClick={handleNewPropertyCreateRequest}> Submit</Button>
+        </Grid>
+        <Collapse in={hasErrors}>
+          <Alert severity="error" >We are missing information needed to create the property</Alert>
+        </Collapse>
+      </Grid>
+    </>
   )
-
 }
 
 export default PropertyEditor
