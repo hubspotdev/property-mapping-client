@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PropertyEditor from '../PropertyEditor';
-import { SupportedObjectTypes } from '../../utils';
+import PropertyEditor from '../components/PropertyEditor';
+import { SupportedObjectTypes } from '../utils';
 
 describe('PropertyEditor', () => {
   const mockProps = {

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import MappingDisplay from '../MappingDisplay';
-import { Direction, Property, PropertyWithMapping } from '../../utils';
+import MappingDisplay from '../components/MappingDisplay';
+import { Direction, Property, PropertyWithMapping } from '../utils';
 
 // Mock fetch globally
 global.fetch = jest.fn();

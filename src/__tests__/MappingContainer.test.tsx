@@ -1,6 +1,6 @@
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
-import MappingContainer from '../MappingContainer'
-import { SupportedObjectTypes } from '../../utils'
+import MappingContainer from '../components/MappingContainer'
+import { SupportedObjectTypes } from '../utils'
 
 // Silence console messages during tests
 beforeAll(() => {
@@ -16,19 +16,19 @@ afterAll(() => {
 global.fetch = jest.fn()
 
 // Mock dependencies
-jest.mock('../MappingDisplay', () => ({
+jest.mock('../components/MappingDisplay', () => ({
   __esModule: true,
   default: () => <div data-testid="mapping-display">Mapping Display</div>
 }))
 
-jest.mock('../PropertyEditor', () => ({
+jest.mock('../components/PropertyEditor', () => ({
   __esModule: true,
   default: () => <div data-testid="property-editor">Property Editor</div>
 }))
 
 // Mock utils
-jest.mock('../../utils', () => {
-  const originalModule = jest.requireActual('../../utils')
+jest.mock('../utils', () => {
+  const originalModule = jest.requireActual('../utils')
   return {
     ...originalModule,
     getContactProperties: jest.fn().mockReturnValue([]),
