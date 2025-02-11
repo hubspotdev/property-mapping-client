@@ -33,7 +33,7 @@ Facilitates the creation of new properties with specific attributes like label, 
 
 2. In the project directory, follow these steps:
 - Clone the repository
-- Install the dependencies `npm install`
+- Install the dependencies: `npm install`
 - Start the application:
    ``npm start``
 - Open [http://localhost:3000](http://localhost:3000) to view the app in your browser. The page will reload if you make edits, and you will also see any lint errors in the console.
@@ -45,6 +45,10 @@ Facilitates the creation of new properties with specific attributes like label, 
 - Support for required mappings
 - Success/error message displays
 - Loader graphics while fetching data
+
+## Testing:
+To execute the tests, use the following command `npm test`.
+To check the test coverage report use `npm run test:coverage`.
 
 ## Where to get help?
 
