@@ -1,0 +1,5 @@
+node_modules
+# Test coverage reports
+coverage/
+coverage/*
+*.lcov

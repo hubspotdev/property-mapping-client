@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import "./App.css";
 
-import { Grid, Box, Snackbar, ThemeProvider } from "@mui/material";
+import { Box, Grid, Snackbar, ThemeProvider } from "@mui/material";
 
 import TabContainer from "./components/Tabs";
 import Header from "./components/Header";
@@ -20,10 +20,10 @@ function App(): JSX.Element {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={12} columns={12}>
           <Header></Header>
-          <Grid id="sideBarContainer" xs={2} item>
+          <Grid id="sideBarContainer" xs={2} item data-testid="sideBarContainer">
             <p>Side Bar Content here</p>
           </Grid>
-          <Grid id="bodyContainer" xs={8} item>
+          <Grid id="bodyContainer" xs={8} item data-testid="bodyContainer">
             <Snackbar
               open={displaySnackBar}
               message={snackbarMessage}
@@ -44,7 +44,7 @@ function App(): JSX.Element {
               />
             </TabContainer>
           </Grid>
-          <Grid id="footerContainer" xs={12} item className="App-footer">
+          <Grid id="footerContainer" xs={12} item className="App-footer" data-testid="footerContainer">
             <p> Footer Content here</p>
           </Grid>
         </Grid>

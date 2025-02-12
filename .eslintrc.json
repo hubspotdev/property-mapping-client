@@ -1,4 +1,8 @@
 {
+  // Inherits all rules from the "prettier" config
+  // This ensures ESLint doesn't conflict with Prettier formatting
   "extends": ["prettier"],
+
+  // Specifies which version of JavaScript/ECMAScript to use for parsing
   "parserOptions": {"ecmaVersion": "latest"}
 }
