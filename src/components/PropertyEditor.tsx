@@ -1,7 +1,7 @@
 import { AppBar, FormControl, FormControlLabel, FormGroup, Grid, InputLabel, MenuItem, Box, Select, SelectChangeEvent, TextField, ToggleButton, Typography, Menu , Checkbox, Button, Alert, Collapse} from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {Property, PropertyWithMapping, SupportedObjectTypes} from '../utils'
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { PropertyWithMapping, SupportedObjectTypes} from '../utils'
+import React, { ChangeEvent, useState } from "react";
 
 
 const FormField = styled(Box)(({theme}) =>({
@@ -49,7 +49,6 @@ function PropertyEditor(props:{onNewPropertyCreate: React.Dispatch<React.SetStat
   const [hasErrors, setHasErrors] = useState(false)
 
 const createNewProperty = async (body:any) =>{
-  console.log('body',body)
   const response = await fetch("/api/native-properties/",{body:JSON.stringify(body), method:"POST",        headers: {
     "Content-Type": "application/json",
   },})

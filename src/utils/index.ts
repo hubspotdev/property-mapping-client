@@ -1,5 +1,3 @@
-import { PropertySignature } from "typescript";
-
 interface Property {
   name: string;
   label: string;
@@ -62,7 +60,6 @@ enum SupportedObjectTypes {
 
 const getHubSpotProperties = async (): Promise<PropertiesResponse> => {
   const response = await fetch("/api/hubspot-properties");
-  console.log(response.headers.get('content-type'))
   if(response.headers.get('content-type')?.includes('text/html')){
     window.location.href = await response.text()
 
@@ -94,12 +91,6 @@ const shapeProperties = (properties: Property[], object: string): Property[] => 
   });
 };
 
-// const makeMappingUnique = (mapping: Mapping) => {
-//   const { nativeName, hubspotProperty } = mapping;
-//   const { label, object, type } = hubspotProperty;
-//   return `${nativeName};${hubspotProperty.name};${object};${label}`;
-// };
-
 const getMappingNameFromDifferenceArray = (mappingStrings: string[]):string => {
   const mappingString = mappingStrings[0]; // should only ever be one item in the array since this fires on click
   const valuesArray = mappingString.split(";");
@@ -127,7 +118,6 @@ export {
   getCompanyProperties,
   getContactProperties,
   shapeProperties,
-  //makeMappingUnique,
   getMappingNameFromDifferenceArray,
   displayErrorMessage,
   PROPERTY_TYPE_COMPATIBILITY,
