@@ -20,7 +20,7 @@ A React-based web application designed to handle and map company and contact pro
 - [License](#license)
 
 ## What this project does:
-This project is a React-based web application designed to handle and map company and contact properties. It works together with a server built using Express.js, please refer to the [Express.js application repository](https://github.com/hubspotdev/property-mapping-server).
+This project is a React-based web application designed to handle and map company and contact properties. It works together with a server built using Express.js, refer to the [Express.js application repository](https://github.com/hubspotdev/property-mapping-server).
 
 ## Why is this project useful:
 This project simplifies the process of property mapping for companies and contacts.
