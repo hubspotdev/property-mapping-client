@@ -55,25 +55,43 @@ const createNewProperty = async (body:any) =>{
   return response
 }
 
-  const handleNewPropertyCreateRequest = async () =>{
-    if(!propertyLabel|| !propertyName || !propertyType || !objectType){
-      setHasErrors(true)
-    }
-    const propertyInfo ={
-      propertyLabel, propertyName, propertyType, objectType, enforcesUniquness
-    }
-    const createNewPropertyResponse = await createNewProperty(propertyInfo)
-    if(createNewPropertyResponse.status == 200){
-      const newPropertyWithMapping:PropertyWithMapping = {
-        property:{name:propertyName, label:propertyLabel, type:propertyType, object:objectType, unique:enforcesUniquness, modificationMetadata:{archivable:true, readOnlyDefinition:false, readOnlyValue:false}},//hardcoding modification metadata, will consider making it editible in the future
-
-      }
-      setNativePropertiesWithMappings([...nativePropertiesWithMappings,newPropertyWithMapping])
-      onNewPropertyCreate(false)
-    }
-    console.log(createNewPropertyResponse)
-
+const handleNewPropertyCreateRequest = async () => {
+  if(!propertyLabel || !propertyName || !propertyType || !objectType){
+    setHasErrors(true)
   }
+  const propertyInfo = {
+    propertyLabel,
+    propertyName,
+    propertyType,
+    objectType,
+    enforcesUniquness,
+    modificationMetadata: {
+      archivable: true,
+      readOnlyDefinition: false,
+      readOnlyValue: false
+    }
+  }
+  const createNewPropertyResponse = await createNewProperty(propertyInfo)
+  if(createNewPropertyResponse.status == 200){
+    const newPropertyWithMapping:PropertyWithMapping = {
+      property:{
+        name: propertyName,
+        label: propertyLabel,
+        type: propertyType,
+        object: objectType,
+        unique: enforcesUniquness,
+        modificationMetadata: {
+          archivable: true,
+          readOnlyDefinition: false,
+          readOnlyValue: false
+        }
+      }
+    }
+    setNativePropertiesWithMappings([...nativePropertiesWithMappings, newPropertyWithMapping])
+    onNewPropertyCreate(false)
+  }
+  console.log(createNewPropertyResponse)
+}
 
   return(
     <>

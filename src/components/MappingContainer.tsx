@@ -1,6 +1,5 @@
-import { useEffect, useState,  Dispatch, SetStateAction  } from "react";
+import { useEffect, useState } from "react";
 import MappingDisplay from "./MappingDisplay";
-
 import PropertyEditor from './PropertyEditor';
 
 import {
@@ -13,29 +12,28 @@ import {
   SupportedObjectTypes,
 } from "../utils";
 
-
 import { Button, CircularProgress, Drawer, Grid } from "@mui/material";
 import { MappingHeader } from './MappingHeaders';
 
-function MappingContainer(props: {
-  objectType: SupportedObjectTypes
-  setDisplaySnackBar: Function;
-  setSnackbarMessage: Function;
-}):JSX.Element {
-  const { objectType} = props;
+type MappingContainerProps = {
+  objectType: SupportedObjectTypes;
+  setDisplaySnackBar: (open: boolean) => void;
+  setSnackbarMessage: (msg: string) => void;
+};
 
+function MappingContainer(props: MappingContainerProps): JSX.Element {
+  const { objectType } = props;
 
-
-  const [shouldShowPropertyEditor, setShouldShowPropertyEditor] = useState(false)
+  const [shouldShowPropertyEditor, setShouldShowPropertyEditor] = useState(false);
 
   const [hubspotProperties, setHubSpotProperties] = useState<Property[]>([]);
-  const [nativePropertiesWithMappings, setNativePropertiesWithMappings] =
-    useState<PropertyWithMapping[]>();
+  const [nativePropertiesWithMappings, setNativePropertiesWithMappings] = useState<PropertyWithMapping[]>();
 
-  const onNewPropertyClick = () =>{
-    setShouldShowPropertyEditor(!shouldShowPropertyEditor)
-  }
+  const onNewPropertyClick = () => {
+    setShouldShowPropertyEditor(!shouldShowPropertyEditor);
+  };
 
+  // Fetch native properties with mappings on mount
   useEffect(() => {
     async function getNativePropertiesWithMappings(): Promise<void> {
       try {
@@ -43,75 +41,83 @@ function MappingContainer(props: {
         if (!response.ok) {
           throw new Error(`Failed to fetch data! Status: ${response.status}`);
         }
-        const nativePropertiesWithMappings = (await response.json()) as PropertyWithMapping[];
-        console.log('About to update nativePropertiesWithMappings to')
-        console.log(nativePropertiesWithMappings)
-        setNativePropertiesWithMappings(nativePropertiesWithMappings);
+        // Only call .json() ONCE and use the value!
+        const data = (await response.json()) as PropertyWithMapping[];
+        console.log('About to update nativePropertiesWithMappings to', data);
+        setNativePropertiesWithMappings(data);
       } catch (error) {
         console.error("Error fetching native properties with mappings:", error);
       }
     }
 
-    getNativePropertiesWithMappings()
-      .catch(err => console.error(err));
-
+    getNativePropertiesWithMappings().catch(err => console.error(err));
   }, []);
 
+  // Fetch and shape HubSpot properties on mount/objectType change
   useEffect(() => {
-    async function checkHubspotProperties():Promise<void> {
-      const hubspotProperties = await getHubSpotProperties();
-      console.log('hubspotProperties')
-      console.log(hubspotProperties)
+    async function checkHubspotProperties(): Promise<void> {
+      const hubspotPropertiesRaw = await getHubSpotProperties();
+      console.log('hubspotProperties', hubspotPropertiesRaw);
+
       switch (objectType) {
-      case SupportedObjectTypes.contacts:
-        setHubSpotProperties(
-          shapeProperties(getContactProperties(hubspotProperties), "Contact")
-        );
-        break;
-      case SupportedObjectTypes.companies:
-        setHubSpotProperties(
-          shapeProperties(getCompanyProperties(hubspotProperties), "Company")
-        );
-        break;
-      default:
-        console.log("unknown object type");
+        case SupportedObjectTypes.contacts:
+          setHubSpotProperties(
+            shapeProperties(getContactProperties(hubspotPropertiesRaw), "Contact")
+          );
+          break;
+        case SupportedObjectTypes.companies:
+          setHubSpotProperties(
+            shapeProperties(getCompanyProperties(hubspotPropertiesRaw), "Company")
+          );
+          break;
+        default:
+          console.log("unknown object type");
       }
     }
 
-    checkHubspotProperties()
-      .catch(err => console.error(err));
+    checkHubspotProperties().catch(err => console.error(err));
+  }, [objectType]);
 
-  }, []);
+  // Helper to filter native properties
   const filterPropertiesByObjectType = (
     nativePropertiesWithMappings: PropertyWithMapping[]
-  ):PropertyWithMapping[] => {
-    return nativePropertiesWithMappings.filter(
-      (nativePropertyWithMapping: PropertyWithMapping) => {
-        return nativePropertyWithMapping.property.object == objectType;
-      }
+  ): PropertyWithMapping[] =>
+    nativePropertiesWithMappings.filter(
+      (item: PropertyWithMapping) => item.property.object === objectType
     );
-  };
 
   return !nativePropertiesWithMappings ? (
     <CircularProgress data-testid="loading-spinner" />
   ) : (
     <>
-      <MappingHeader/>
-      {filterPropertiesByObjectType(nativePropertiesWithMappings).map(
-        (nativePropertyWithMapping) => {
-          return (
-            <MappingDisplay
-              key={nativePropertyWithMapping.property.name}
-              nativePropertyWithMapping={nativePropertyWithMapping}
-              hubspotProperties={hubspotProperties}
+      <MappingHeader />
+      {filterPropertiesByObjectType(nativePropertiesWithMappings).map(nativePropertyWithMapping => (
+        <MappingDisplay
+          key={nativePropertyWithMapping.property.name}
+          nativePropertyWithMapping={nativePropertyWithMapping}
+          hubspotProperties={hubspotProperties}
+        />
+      ))}
+      <Button onClick={onNewPropertyClick} variant='contained'>
+        {shouldShowPropertyEditor ? "Cancel" : "Add Property"}
+      </Button>
+      <Drawer
+        PaperProps={{ elevation: 3 }}
+        anchor="right"
+        open={shouldShowPropertyEditor}
+        onClose={onNewPropertyClick}
+      >
+        <Grid container spacing={2}>
+          <Grid item>
+            <PropertyEditor
+              onNewPropertyCreate={() => setShouldShowPropertyEditor(false)}
+              setNativePropertiesWithMappings={setNativePropertiesWithMappings}
+              nativePropertiesWithMappings={nativePropertiesWithMappings}
             />
-          );
-        }
-      )}
-      <Button onClick={onNewPropertyClick} variant='contained'> {shouldShowPropertyEditor ? "Add Property" : "Cancel"}</Button>
-      <Drawer PaperProps={{elevation:3}} anchor="right" open={shouldShowPropertyEditor} onClose={onNewPropertyClick}>    <Grid container spacing={12} columns={12}> <Grid item ><PropertyEditor onNewPropertyCreate={setShouldShowPropertyEditor} setNativePropertiesWithMappings={setNativePropertiesWithMappings} nativePropertiesWithMappings={nativePropertiesWithMappings} /></Grid> </Grid></Drawer>
+          </Grid>
+        </Grid>
+      </Drawer>
     </>
-
   );
 }
 
