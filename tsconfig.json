@@ -20,6 +20,6 @@
   "include": [
     "src/**/*",
     "**/*.test.ts",
-    "**/*.test.tsx"
-  ]
+    "**/*.test.tsx",
+    "src/setupProxy.js"  ]
 }
