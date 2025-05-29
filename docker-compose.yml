@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  client:
+    # Build configuration
+    build:
+      context: .  # Use the current directory as build context
+
+    # Port mapping - host:container
+    ports:
+      - "3002:3002"
+
+    # Command to run when container starts
+    command: npm start
+
+    # Volume mounts for development
+    volumes:
+      - .:/app            # Mount current directory for live code updates
+      - /app/node_modules # Preserve container's node_modules (prevent overwriting with host's)
+
+    # Environment variables
+    environment:
+      NODE_ENV: development
+
+    # Network configuration
+    networks:
+      - frontend-network
+
+    # Health check configuration
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002"]
+      interval: 30s      # Check every 30 seconds
+      timeout: 10s       # Timeout after 10 seconds
+      retries: 3         # Retry 3 times before marking unhealthy
+      start_period: 40s  # Initial grace period
+
+    # Container restart policy
+    restart: unless-stopped
+
+# Define networks for service communication
+networks:
+  frontend-network:
+    external: true  # Use an external network (must be created separately)
