@@ -1,3 +1,9 @@
+![Containerization Available](https://img.shields.io/badge/Containerization-Available-blue)
+
+> ⚠️ **For Docker users:**  
+> Switch to the [`containerization`](https://github.com/hubspotdev/property-mapping-client/tree/containerization) branch for Docker setup and usage instructions.
+
+
 # Property Mappings Client
 
 A React-based web application designed to handle and map company and contact properties, working in conjunction with an Express.js backend server.
